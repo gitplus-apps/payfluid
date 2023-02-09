@@ -217,7 +217,7 @@ class PayFluid
         }
 
         $requestBody = [
-            'amount' => floatval($payment->amount),
+            'amount' => $payment->amount,
             'currency' => $payment->currency,
             'datetime' => $payment->dateTime,
             'descr' => $payment->description,
