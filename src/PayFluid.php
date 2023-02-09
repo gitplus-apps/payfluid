@@ -30,7 +30,7 @@ class PayFluid
      */
     protected string $loginParameter;
 
-    const baseUrl = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
+    private const baseUrl = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
 
     /**
      * The various endpoints provided by the API
