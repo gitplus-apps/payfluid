@@ -79,12 +79,10 @@ class PayFluid
         ]);
 
         if ($requestBody === false) {
-            throw new Exception("get secure credentials: encoding the request body to json failed: " . json_last_error_msg());
+            throw new Exception("creating secure zone failed: encoding the request body to json failed: " . json_last_error_msg());
         }
 
         $responseHeaders = [];
-//        $rsaPublicKey = "";
-//        $sha256Salt = "";
 
         $ch = curl_init($this->endpoints["secureZone"]);
         curl_setopt_array($ch, [
@@ -113,11 +111,6 @@ class PayFluid
                     return $headerLength;
                 }
 
-//                $kekValue = ltrim("kek: ", strtolower($currentHeader));
-//                $split = explode(".", $kekValue);
-//                $rsaPublicKey = $split[0];
-//                $sha256Salt = $split[1];
-
                 $headerKeyValue = explode(":", trim($currentHeader));
 
                 // Some headers do not have values so we skip them
@@ -132,24 +125,22 @@ class PayFluid
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("get secure credentials: " . curl_error($ch));
+            throw new Exception("failed to create secure credentials: " . curl_error($ch));
         }
 
         $response = json_decode($response, false);
         if ($response === false) {
-            throw new Exception("get secure credentials: decoding json response failed: " . json_last_error_msg());
+            throw new Exception("could not create secure credentials: decoding json response failed: " . json_last_error_msg());
         }
 
         if ($response->resultCode !== "00") {
-            throw new Exception("get secure credentials: " . $response->resultMessage);
+            throw new Exception("could not create secure credentials: " . $response->resultMessage);
         }
 
         $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
 
         return new SecureCredentials(
             $response->session,
-//            $rsaPublicKey,
-//            $sha256Salt,
             $rsaPublicKeyAndsha256Salt[0],
             $rsaPublicKeyAndsha256Salt[1],
             $response->kekExpiry,
@@ -236,13 +227,13 @@ class PayFluid
     public function getPaymentLink(SecureCredentials $credentials, Payment $payment): PaymentLink
     {
         if (empty($credentials->session)) {
-            throw new Exception("get payment link: the session value in credentials cannot be empty");
+            throw new Exception("the session value in credentials cannot be empty");
         }
 
         try {
             $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
-            throw new InvalidPaymentRequestException("get payment link: " . $e->getMessage());
+            throw new InvalidPaymentRequestException("invalid payment object: " . $e->getMessage());
         }
 
         $requestBody = [
@@ -276,7 +267,7 @@ class PayFluid
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);
         if ($requestBody === false) {
-            throw new Exception("get payment link: error trying to encode request body to json: " . json_last_error_msg());
+            throw new Exception("could not get payment link: error trying to encode request body to json: " . json_last_error_msg());
         }
 
         $ch = curl_init($this->endpoints["getPaymentLink"]);
@@ -292,16 +283,16 @@ class PayFluid
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("get payment link: curl request failed: " . curl_error($ch));
+            throw new Exception("could not get payment link: " . curl_error($ch));
         }
 
         $response = json_decode($response);
         if ($response === false) {
-            throw new Exception("get payment link: could not decode json response from server: " . json_last_error_msg());
+            throw new Exception("could not get payment link: could not decode json response from server: " . json_last_error_msg());
         }
 
         if ($response->result_code !== "00") {
-            throw new Exception("get payment link: server responded with an error: " . $response->result_message);
+            throw new Exception("could not get payment link: " . $response->result_message);
         }
 
         $paymentLink = new PaymentLink();
