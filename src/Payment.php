@@ -5,7 +5,7 @@ namespace Gitplus\PayFluid;
 
 use Exception;
 
-class PaymentRequest
+class Payment
 {
     /**
      * The exact transaction amount value expected to be charged the customer.

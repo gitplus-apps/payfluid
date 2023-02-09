@@ -145,10 +145,10 @@ class PayFluid
     /**
      * Check to ensure that the payment request is valid
      *
-     * @param PaymentRequest $payment
+     * @param Payment $payment
      * @throws InvalidPaymentRequestException
      */
-    private function validatePaymentRequest(PaymentRequest $payment)
+    private function validatePaymentRequest(Payment $payment)
     {
         // Validate amount
         if (empty($payment->amount)) {
@@ -200,11 +200,11 @@ class PayFluid
      * Makes a request to PayFluid to initiate a payment.
      *
      * @param SecureCredentials $credentials
-     * @param PaymentRequest $payment
+     * @param Payment $payment
      * @return PaymentLink The redirect url
      * @throws Exception
      */
-    public function getPaymentLink(SecureCredentials $credentials, PaymentRequest $payment): PaymentLink
+    public function getPaymentLink(SecureCredentials $credentials, Payment $payment): PaymentLink
     {
         if (empty($credentials->session)) {
             throw new Exception("the session value in credentials cannot be empty");
