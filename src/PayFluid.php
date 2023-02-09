@@ -372,7 +372,7 @@ class PayFluid
         $status->payFluidReference = $payload["aapf_txn_ref"];
         $status->payFluidErrorCode = $payload["aapf_txn_sc"];
         $status->payFluidErrorMsg = $payload["aapf_txn_sc_msg"];
-        $status->signature = $payload["aapf_txn_signature"];
+        $status->signature = $signatureFromRequest;
         return $status;
     }
 
