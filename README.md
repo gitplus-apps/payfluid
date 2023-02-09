@@ -38,7 +38,7 @@ try {
     $payment->email = $email;
     $payment->phone = $phone;
     $payment->name = $name;
-    $payment->otherInfo = "Package Number";
+    $payment->otherInfo = "Any extra information";
     $payment->reference = bin2hex(random_bytes(5)); // Must be unique and not more than 10 characters.
     $payment->redirectUrl = "https://your/redirect/url";
     $payment->callbackUrl = "https://your/callback/webhook/url";
