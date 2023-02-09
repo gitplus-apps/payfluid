@@ -229,7 +229,7 @@ class PayFluid
             'reference' => $payment->reference,
             'responseRedirectURL' => $payment->responseRedirectUrl,
             'session' => $credentials->session,
-            'trxStatusCallbackURL' => $payment->webhookUrl,
+            'trxStatusCallbackURL' => $payment->trxStatusCallbackURL,
             'customTxn' => $payment->customTxn,
         ];
 
