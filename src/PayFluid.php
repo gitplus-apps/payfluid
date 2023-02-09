@@ -83,6 +83,8 @@ class PayFluid
         }
 
         $responseHeaders = [];
+        $rsaPublicKey = "";
+        $sha256Salt = "";
 
         $ch = curl_init($this->endpoints["secureZone"]);
         curl_setopt_array($ch, [
@@ -97,17 +99,29 @@ class PayFluid
             ],
 
             // TODO: Explain what this function is attempting to do
-            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders) {
-                $headerLength = strlen($currentHeader);
-                $headerKeyValue = explode(":", trim($currentHeader));
-
-                // Some headers do not have values so we skip them
-                if (count($headerKeyValue) < 2) {
-                    return $headerLength;
+            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders, &$rsaPublicKey, &$sha256Salt) {
+                $headerLen = strlen($currentHeader);
+                if (stripos($currentHeader, "kek") === false) {
+                    return $headerLen;
                 }
 
-                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
-                return $headerLength;
+                $kekValue = explode(":", trim($currentHeader))[1];
+                $splitKekValue = explode(".", $kekValue);
+                $rsaPublicKey = $splitKekValue[0];
+                $sha256Salt = $splitKekValue[1];
+
+
+
+//                $headerLength = strlen($currentHeader);
+//                $headerKeyValue = explode(":", trim($currentHeader));
+//
+//                // Some headers do not have values so we skip them
+//                if (count($headerKeyValue) < 2) {
+//                    return $headerLength;
+//                }
+//
+//                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
+//                return $headerLength;
             }
         ]);
 
