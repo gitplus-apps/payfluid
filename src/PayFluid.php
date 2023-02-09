@@ -82,9 +82,7 @@ class PayFluid
             throw new Exception("creating secure zone failed: encoding the request body to json failed: " . json_last_error_msg());
         }
 
-//        $responseHeaders = [];
-        $rsaPublicKey = "";
-        $sha256Salt = "";
+        $rsaPublicKey = $sha256Salt = "";
 
         $ch = curl_init($this->endpoints["secureZone"]);
         curl_setopt_array($ch, [
