@@ -99,7 +99,7 @@ class PayFluid
             ],
 
             // TODO: Explain what this function is attempting to do
-            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders, &$rsaPublicKey, &$sha256Salt) {
+            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$rsaPublicKey, &$sha256Salt) {
                 $headerLen = strlen($currentHeader);
                 if (stripos($currentHeader, "kek") === false) {
                     return $headerLen;
@@ -109,6 +109,7 @@ class PayFluid
                 $splitKekValue = explode(".", $kekValue);
                 $rsaPublicKey = $splitKekValue[0];
                 $sha256Salt = $splitKekValue[1];
+                return $headerLen;
 
 
 
@@ -143,8 +144,10 @@ class PayFluid
 
         return new SecureCredentials(
             $response->session,
-            $rsaPublicKeyAndsha256Salt[0],
-            $rsaPublicKeyAndsha256Salt[1],
+//            $rsaPublicKeyAndsha256Salt[0],
+//            $rsaPublicKeyAndsha256Salt[1],
+            $rsaPublicKey,
+            $sha256Salt,
             $response->kekExpiry,
             $response->macExpiry,
             $response->approvalCode
