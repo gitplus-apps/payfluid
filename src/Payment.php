@@ -186,7 +186,7 @@ class Payment
      *    }
      * @var string
      */
-    public string $customTxn;
+    public string $customTxn = "";
 
     public function __construct()
     {
