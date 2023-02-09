@@ -1,0 +1,23 @@
+{
+    "name": "gitplus/payfluid",
+    "description": "A wrapper around PayFluid's API",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Gitplus\\Payfluid\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nana Osei Yeboah",
+            "email": "yeboahnanaosei@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "phpseclib/phpseclib": "~2.0",
+        "ext-json": "*",
+        "ext-curl": "*"
+    }
+}
