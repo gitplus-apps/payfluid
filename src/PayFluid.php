@@ -154,7 +154,7 @@ class PayFluid
         if (empty($payment->amount)) {
             throw new InvalidPaymentRequestException("payment amount cannot be empty");
         }
-        if (!is_float(floatval($payment->amount))) {
+        if (!filter_var($payment->amount, FILTER_VALIDATE_FLOAT)) {
             throw new InvalidPaymentRequestException(sprintf("payment '%s' amount is not valid float or decimal", $payment->amount));
         }
 
@@ -189,10 +189,12 @@ class PayFluid
             throw new InvalidPaymentRequestException("payment reference cannot be empty");
         }
 
-        if (!empty($payment->responseRedirectUrl) && !empty($payment->trxStatusCallbackURL)) {
-            if ($payment->responseRedirectUrl === $payment->trxStatusCallbackURL) {
-                throw new InvalidPaymentRequestException("the 'responseRedirectUrl' and 'trxStatusCallbackURL' cannot be the same");
-            }
+        // Validate redirect and callback urls
+        if (empty($payment->responseRedirectUrl)) {
+            throw new InvalidPaymentRequestException("payment response redirect url cannot be empty");
+        }
+        if (!empty($payment->trxStatusCallbackURL) && ($payment->responseRedirectUrl === $payment->trxStatusCallbackURL)) {
+            throw new InvalidPaymentRequestException("the 'responseRedirectUrl' and 'trxStatusCallbackURL' cannot be the same");
         }
     }
 
@@ -213,25 +215,31 @@ class PayFluid
         try {
             $this->validatePaymentRequest($payment);
         } catch (Throwable $e) {
-            throw new InvalidPaymentRequestException("invalid payment object: ". $e->getMessage());
+            throw new InvalidPaymentRequestException("invalid payment object: " . $e->getMessage());
         }
 
         $requestBody = [
             'amount' => $payment->amount,
             'currency' => $payment->currency,
             'datetime' => $payment->dateTime,
-            'descr' => $payment->description,
             'email' => $payment->email,
             'lang' => $payment->lang,
             'mobile' => $payment->phone,
             'name' => $payment->name,
-            'otherInfo' => $payment->otherInfo,
             'reference' => $payment->reference,
             'responseRedirectURL' => $payment->responseRedirectUrl,
             'session' => $credentials->session,
-            'trxStatusCallbackURL' => $payment->trxStatusCallbackURL,
         ];
 
+        if (!empty($payment->description)) {
+            $requestBody["descr"] = $payment->description;
+        }
+        if (!empty($payment->otherInfo)) {
+            $requestBody["otherInfo"] = $payment->otherInfo;
+        }
+        if (!empty($payment->trxStatusCallbackURL)) {
+            $requestBody["trxStatusCallbackURL"] = $payment->trxStatusCallbackURL;
+        }
         if (!empty($payment->customTxn)) {
             $requestBody["customTxn"] = $payment->customTxn;
         }
@@ -301,7 +309,7 @@ class PayFluid
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("could not get payment status: ". curl_error($ch));
+            throw new Exception("could not get payment status: " . curl_error($ch));
         }
 
         return $response;
