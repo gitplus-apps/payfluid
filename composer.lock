@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0c72886e7a08e74d2eb9d94cd4f134c",
+    "content-hash": "6cbb6a440bbb44b870de9ed77c7a0b9c",
     "packages": [
         {
             "name": "phpseclib/phpseclib",
@@ -123,7 +123,11 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=7.4",
+        "ext-json": "*",
+        "ext-curl": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }
