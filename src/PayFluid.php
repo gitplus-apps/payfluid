@@ -117,7 +117,7 @@ class PayFluid
         }
 
         $response = json_decode($response, false);
-        if ($response === false) {
+        if ($response === null) {
             throw new Exception("could not create secure credentials: decoding json response failed: " . json_last_error_msg());
         }
 
@@ -273,7 +273,7 @@ class PayFluid
         }
 
         $response = json_decode($response);
-        if ($response === false) {
+        if ($response === null) {
             throw new Exception("could not get payment link: could not decode json response from server: " . json_last_error_msg());
         }
 
@@ -297,10 +297,11 @@ class PayFluid
 
     /**
      * @param string $payReference
-     * @return string
+     * @param string $session
+     * @return PaymentStatus
      * @throws Exception
      */
-    public function getPaymentStatus(string $payReference): string
+    public function confirmPaymentStatus(string $payReference, string $session): PaymentStatus
     {
         $ch = curl_init();
         curl_setopt_array($ch, [
@@ -313,10 +314,15 @@ class PayFluid
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("could not get payment status: " . curl_error($ch));
+            throw new Exception("confirm payment status: making http request failed: " . curl_error($ch));
         }
 
-        return $response;
+        $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
+        if ($payload === null) {
+            throw new Exception("confirm payment status: could not json decode response from server: " . json_last_error_msg());
+        }
+
+        return self::verifyTransaction($payload, $session);
     }
 
     /**
@@ -328,9 +334,12 @@ class PayFluid
      * @return array
      * @throws Exception
      */
-    public static function verifyPayment(string $qs, string $session): array
+    public static function verifyRedirectDetails(string $qs, string $session): PaymentStatus
     {
         $payload = json_decode(urldecode($qs), true, 512, JSON_BIGINT_AS_STRING);
+        if ($payload === null) {
+            throw new Exception("verify payment: could not json decode query parameter 'qs': " . json_last_error_msg());
+        }
         if (!array_key_exists("aapf_txn_signature", $payload)) {
             throw new Exception("verify payment: no signature found in query parameters");
         }
@@ -348,6 +357,69 @@ class PayFluid
             throw new Exception("verify payment: signature is not valid");
         }
 
-        return $payload;
+        $status = new PaymentStatus();
+        $status->amount = $payload["aapf_txn_amt"];
+        $status->redirectUrl = $payload["aapf_txn_clientRspRedirectURL"];
+        $status->callbackUrl = $payload["aapf_txn_clientTxnWH"];
+        $status->clientReference = $payload["aapf_txn_cref"];
+        $status->currency = $payload["aapf_txn_currency"];
+        $status->dateTime = $payload["aapf_txn_datetime"];
+        $status->upstreamReference = $payload["aapf_txn_gw_ref"];
+        $status->upstreamErrorCodeAndMsg = $payload["aapf_txn_gw_sc"];
+        $status->maskedPhoneNumber = $payload["aapf_txn_maskedInstr"];
+        $status->payReference = $payload["aapf_txn_payLink"];
+        $status->payScheme = $payload["aapf_txn_payScheme"];
+        $status->payFluidReference = $payload["aapf_txn_ref"];
+        $status->payFluidErrorCode = $payload["aapf_txn_sc"];
+        $status->payFluidErrorMsg = $payload["aapf_txn_sc_msg"];
+        $status->signature = $payload["aapf_txn_signature"];
+        return $status;
+    }
+
+    /**
+     * Verifies that the data sent from PayFluid to the integrator is coming from
+     * PayFluid and has not been tampered with.
+     *
+     * @param array $transactionDetails
+     * @param string $session The session value from secure credentials
+     * @return PaymentStatus
+     * @throws Exception
+     */
+    public static function verifyTransaction(array $transactionDetails, string $session): PaymentStatus
+    {
+        if (!array_key_exists("aapf_txn_signature", $transactionDetails)) {
+            throw new Exception("verify webhook: no signature found in query parameters");
+        }
+        if (empty($transactionDetails["aapf_txn_signature"])) {
+            throw new Exception("verify webhook: empty signature string found in query parameters");
+        }
+
+        $signatureFromRequest = $transactionDetails["aapf_txn_signature"];
+        unset($transactionDetails["aapf_txn_signature"]);
+
+        $queryParams = join("", array_values($transactionDetails));
+
+        $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
+        if (!hash_equals(strtoupper($calculatedSignature), strtoupper($signatureFromRequest))) {
+            throw new Exception("verify webhook: signature is not valid");
+        }
+
+        $status = new PaymentStatus();
+        $status->amount = $transactionDetails["aapf_txn_amt"];
+        $status->redirectUrl = $transactionDetails["aapf_txn_clientRspRedirectURL"];
+        $status->callbackUrl = $transactionDetails["aapf_txn_clientTxnWH"];
+        $status->clientReference = $transactionDetails["aapf_txn_cref"];
+        $status->currency = $transactionDetails["aapf_txn_currency"];
+        $status->dateTime = $transactionDetails["aapf_txn_datetime"];
+        $status->upstreamReference = $transactionDetails["aapf_txn_gw_ref"];
+        $status->upstreamErrorCodeAndMsg = $transactionDetails["aapf_txn_gw_sc"];
+        $status->maskedPhoneNumber = $transactionDetails["aapf_txn_maskedInstr"];
+        $status->payReference = $transactionDetails["aapf_txn_payLink"];
+        $status->payScheme = $transactionDetails["aapf_txn_payScheme"];
+        $status->payFluidReference = $transactionDetails["aapf_txn_ref"];
+        $status->payFluidErrorCode = $transactionDetails["aapf_txn_sc"];
+        $status->payFluidErrorMsg = $transactionDetails["aapf_txn_sc_msg"];
+        $status->signature = $transactionDetails["aapf_txn_signature"];
+        return $status;
     }
 }
