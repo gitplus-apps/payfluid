@@ -82,7 +82,7 @@ class PayFluid
             throw new Exception("creating secure zone failed: encoding the request body to json failed: " . json_last_error_msg());
         }
 
-        $responseHeaders = [];
+//        $responseHeaders = [];
         $rsaPublicKey = "";
         $sha256Salt = "";
 
@@ -140,7 +140,7 @@ class PayFluid
             throw new Exception("could not create secure credentials: " . $response->resultMessage);
         }
 
-        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
+//        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
 
         return new SecureCredentials(
             $response->session,
