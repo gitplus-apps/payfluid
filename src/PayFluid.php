@@ -82,7 +82,9 @@ class PayFluid
             throw new Exception("creating secure zone failed: encoding the request body to json failed: " . json_last_error_msg());
         }
 
-        $responseHeaders = [];
+//        $responseHeaders = [];
+        $rsaPublicKey = "";
+        $sha256Salt = "";
 
         $ch = curl_init($this->endpoints["secureZone"]);
         curl_setopt_array($ch, [
@@ -95,16 +97,35 @@ class PayFluid
                 "id: " . base64_encode($this->apiId),
                 "apiKey: " . $this->generateId($now),
             ],
-            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders) {
-                $headerLength = strlen($currentHeader);
-                $headerKeyValue = explode(":", trim($currentHeader));
 
-                // Some headers do not have values so we skip them
-                if (count($headerKeyValue) < 2) {
+            // This curl option allows a function to be called on each of the headers that come
+            // with the response. Meaning for all the response headers that come with the response,
+            // this function will be called one each one of them. The reason why we are doing this
+            // is that, when you make a request to PayFluid to get secure parameters, the response
+            // includes a header that looks like this:
+            //      "Kek: long_string_of_random_characters.even_more_strings".
+            // Notice the full stop or period in the string. We want to retrieve this header and
+            // split it into two(2) using the full stop as the separator. So what this function
+            // will do is to go
+            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$rsaPublicKey, &$sha256Salt) {
+                $headerLength = strlen($currentHeader);
+                if (!stripos($currentHeader, "kek")) {
                     return $headerLength;
                 }
 
-                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
+                $kekValue = ltrim("kek: ", strtolower($currentHeader));
+                $split = explode(".", $kekValue);
+                $rsaPublicKey = $split[0];
+                $sha256Salt = $split[1];
+
+//                $headerKeyValue = explode(":", trim($currentHeader));
+//
+//                // Some headers do not have values so we skip them
+//                if (count($headerKeyValue) < 2) {
+//                    return $headerLength;
+//                }
+
+//                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
                 return $headerLength;
             }
         ]);
@@ -123,12 +144,14 @@ class PayFluid
             throw new Exception("could not create secure credentials: " . $response->resultMessage);
         }
 
-        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
+//        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
 
         return new SecureCredentials(
             $response->session,
-            $rsaPublicKeyAndsha256Salt[0],
-            $rsaPublicKeyAndsha256Salt[1],
+            $rsaPublicKey,
+            $sha256Salt,
+//            $rsaPublicKeyAndsha256Salt[0],
+//            $rsaPublicKeyAndsha256Salt[1],
             $response->kekExpiry,
             $response->macExpiry,
             $response->approvalCode
@@ -152,7 +175,7 @@ class PayFluid
      * @param Payment $payment
      * @throws InvalidPaymentRequestException
      */
-    private function validatePaymentRequest(Payment $payment)
+    private function validatePaymentObject(Payment $payment)
     {
         // Validate amount
         if (empty($payment->amount)) {
@@ -217,7 +240,7 @@ class PayFluid
         }
 
         try {
-            $this->validatePaymentRequest($payment);
+            $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
             throw new InvalidPaymentRequestException("invalid payment object: " . $e->getMessage());
         }
@@ -317,5 +340,17 @@ class PayFluid
         }
 
         return $response;
+    }
+
+    /**
+     * Verifies that the data sent to the integrator's redirect url is indeed coming from PayFluid
+     *
+     * @param string $qs The query string PayFluid sends as part of the responseUrl
+     * @return bool
+     */
+    public function verifyPayment(string $qs): bool
+    {
+        $payload = json_decode($qs, false, 512, JSON_BIGINT_AS_STRING);
+        return true;
     }
 }
