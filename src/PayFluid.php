@@ -82,9 +82,9 @@ class PayFluid
             throw new Exception("get secure credentials: encoding the request body to json failed: " . json_last_error_msg());
         }
 
-//        $responseHeaders = [];
-        $rsaPublicKey = "";
-        $sha256Salt = "";
+        $responseHeaders = [];
+//        $rsaPublicKey = "";
+//        $sha256Salt = "";
 
         $ch = curl_init($this->endpoints["secureZone"]);
         curl_setopt_array($ch, [
@@ -107,25 +107,25 @@ class PayFluid
             // Notice the full stop or period in the string. We want to retrieve this header and
             // split it into two(2) using the full stop as the separator. So what this function
             // will do is to go
-            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$rsaPublicKey, &$sha256Salt) {
+            CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders) {
                 $headerLength = strlen($currentHeader);
                 if (!stripos($currentHeader, "kek")) {
                     return $headerLength;
                 }
 
-                $kekValue = ltrim("kek: ", strtolower($currentHeader));
-                $split = explode(".", $kekValue);
-                $rsaPublicKey = $split[0];
-                $sha256Salt = $split[1];
+//                $kekValue = ltrim("kek: ", strtolower($currentHeader));
+//                $split = explode(".", $kekValue);
+//                $rsaPublicKey = $split[0];
+//                $sha256Salt = $split[1];
 
-//                $headerKeyValue = explode(":", trim($currentHeader));
-//
-//                // Some headers do not have values so we skip them
-//                if (count($headerKeyValue) < 2) {
-//                    return $headerLength;
-//                }
+                $headerKeyValue = explode(":", trim($currentHeader));
 
-//                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
+                // Some headers do not have values so we skip them
+                if (count($headerKeyValue) < 2) {
+                    return $headerLength;
+                }
+
+                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
                 return $headerLength;
             }
         ]);
@@ -144,14 +144,14 @@ class PayFluid
             throw new Exception("get secure credentials: " . $response->resultMessage);
         }
 
-//        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
+        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
 
         return new SecureCredentials(
             $response->session,
-            $rsaPublicKey,
-            $sha256Salt,
-//            $rsaPublicKeyAndsha256Salt[0],
-//            $rsaPublicKeyAndsha256Salt[1],
+//            $rsaPublicKey,
+//            $sha256Salt,
+            $rsaPublicKeyAndsha256Salt[0],
+            $rsaPublicKeyAndsha256Salt[1],
             $response->kekExpiry,
             $response->macExpiry,
             $response->approvalCode
