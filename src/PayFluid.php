@@ -96,18 +96,9 @@ class PayFluid
                 "apiKey: " . $this->generateId($now),
             ],
 
-            // This curl option allows a function to be called on each of the headers that come
-            // with the response. Meaning for all the response headers that come with the response,
-            // this function will be called one each one of them. The reason why we are doing this
-            // is that, when you make a request to PayFluid to get secure parameters, the response
-            // includes a header that looks like this:
-            //      "Kek: long_string_of_random_characters.even_more_strings".
-            // Notice the full stop or period in the string. We want to retrieve this header and
-            // split it into two(2) using the full stop as the separator. So what this function
-            // will do is to go
+            // TODO: Explain what this function is attempting to do
             CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders) {
                 $headerLength = strlen($currentHeader);
-
                 $headerKeyValue = explode(":", trim($currentHeader));
 
                 // Some headers do not have values so we skip them
@@ -334,11 +325,30 @@ class PayFluid
      * Verifies that the data sent to the integrator's redirect url is indeed coming from PayFluid
      *
      * @param string $qs The query string PayFluid sends as part of the responseUrl
-     * @return bool
+     * @param string $session The session value from secure credentials
+     * @return array
+     * @throws Exception
      */
-    public function verifyPayment(string $qs): bool
+    public function verifyPayment(string $qs, string $session): array
     {
-        $payload = json_decode($qs, false, 512, JSON_BIGINT_AS_STRING);
-        return true;
+        $payload = json_decode($qs, true, 512, JSON_BIGINT_AS_STRING);
+        if (!array_key_exists("aapf_txn_signature", $payload)) {
+            throw new Exception("verify payment: no signature found in query parameters");
+        }
+        if (empty($payload["aapf_txn_signature"])) {
+            throw new Exception("verify payment: empty signature string found in query parameters");
+        }
+
+        $signatureFromRequest = $payload["aapf_txn_signature"];
+        unset($payload["aapf_txn_signature"]);
+
+        $queryParams = join("", array_values($payload));
+
+        $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
+        if (!hash_equals($calculatedSignature, $signatureFromRequest)) {
+            throw new Exception("verify payment: signature is not valid");
+        }
+
+        return $payload;
     }
 }
