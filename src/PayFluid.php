@@ -97,8 +97,8 @@ class PayFluid
             ],
 
             // This curl option calls the function for each header in the response.
-            // This function iterates over each http response looking for a specific
-            // header in the form: "Kek: rsa_public_key.sha_256_salt".
+            // This function iterates over each http response header looking for a specific
+            // header in with the form: "Kek: rsa_public_key.sha_256_salt".
             // We want to find this header and split it to get the rsa public key and sha 256 salt.
             CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$rsaPublicKey, &$sha256Salt) {
                 $headerLen = strlen($currentHeader);
