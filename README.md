@@ -34,7 +34,6 @@ $payment->otherInfo = "Package Number";
 $payment->reference = bin2hex(random_bytes(5));
 $payment->redirectUrl = "https://4833-154-160-2-163.eu.ngrok.io";
 $payment->callbackUrl = "https://4833-154-160-2-163.eu.ngrok.io";
-$payment->customTxn = "";
 
 // Use payment object and secure credentials to get a payment link.
 $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
