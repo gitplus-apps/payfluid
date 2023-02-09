@@ -67,6 +67,10 @@ class PayFluid
      */
     public function getSecureCredentials(string $phoneNumber): SecureCredentials
     {
+        if (empty($phoneNumber)) {
+            throw new Exception("could not get secure credentials: empty phone number supplied");
+        }
+
         $now = new DateTime();
         $requestBody = json_encode([
             "cmd" => "getSecureParams",
