@@ -3,6 +3,9 @@
     "description": "A wrapper around PayFluid's API",
     "type": "library",
     "license": "MIT",
+    "keywords": ["payment", "payfluid", "etranzact"],
+    "readme": "README.md",
+    "homepage": "https://github.com/gitplus-apps/payfluid",
     "autoload": {
         "psr-4": {
             "Gitplus\\Payfluid\\": "src/"
@@ -14,7 +17,7 @@
             "email": "yeboahnanaosei@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=7.4",
         "phpseclib/phpseclib": "~2.0",
