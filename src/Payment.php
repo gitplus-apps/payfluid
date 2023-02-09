@@ -83,7 +83,7 @@ class Payment
      * It is expected that the details of the feedback would be verified and used to issue receipt or purchase value to customer.
      * @var string
      */
-    public string $responseRedirectUrl;
+    public string $redirectUrl;
 
     /**
      * This is the client backend URL (aka webhook) that the payment server would push the transaction status to.
@@ -92,7 +92,7 @@ class Payment
      *
      * @var string
      */
-    public string $trxStatusCallbackURL;
+    public string $callbackUrl;
 
     /**
      * This field exposes the power, dynamism and flexibility of Payfluid platform by handing over control to the

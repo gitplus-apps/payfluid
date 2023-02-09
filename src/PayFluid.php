@@ -194,11 +194,11 @@ class PayFluid
         }
 
         // Validate redirect and callback urls
-        if (empty($payment->responseRedirectUrl)) {
-            throw new InvalidPaymentRequestException("payment response redirect url cannot be empty");
+        if (empty($payment->redirectUrl)) {
+            throw new InvalidPaymentRequestException("payment redirect url cannot be empty");
         }
-        if (!empty($payment->trxStatusCallbackURL) && ($payment->responseRedirectUrl === $payment->trxStatusCallbackURL)) {
-            throw new InvalidPaymentRequestException("the 'responseRedirectUrl' and 'trxStatusCallbackURL' cannot be the same");
+        if (!empty($payment->callbackUrl) && ($payment->redirectUrl === $payment->callbackUrl)) {
+            throw new InvalidPaymentRequestException("the 'redirectUrl' and 'callbackUrl' cannot be the same");
         }
     }
 
@@ -231,7 +231,7 @@ class PayFluid
             'mobile' => $payment->phone,
             'name' => $payment->name,
             'reference' => $payment->reference,
-            'responseRedirectURL' => $payment->responseRedirectUrl,
+            'responseRedirectURL' => $payment->redirectUrl,
             'session' => $credentials->session,
         ];
 
@@ -241,8 +241,8 @@ class PayFluid
         if (!empty($payment->otherInfo)) {
             $requestBody["otherInfo"] = $payment->otherInfo;
         }
-        if (!empty($payment->trxStatusCallbackURL)) {
-            $requestBody["trxStatusCallbackURL"] = $payment->trxStatusCallbackURL;
+        if (!empty($payment->callbackUrl)) {
+            $requestBody["trxStatusCallbackURL"] = $payment->callbackUrl;
         }
         if (!empty($payment->customTxn)) {
             $requestBody["customTxn"] = $payment->customTxn;
