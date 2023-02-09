@@ -107,9 +107,6 @@ class PayFluid
             // will do is to go
             CURLOPT_HEADERFUNCTION => function ($curl, $currentHeader) use (&$responseHeaders) {
                 $headerLength = strlen($currentHeader);
-                if (!stripos($currentHeader, "kek")) {
-                    return $headerLength;
-                }
 
                 $headerKeyValue = explode(":", trim($currentHeader));
 
