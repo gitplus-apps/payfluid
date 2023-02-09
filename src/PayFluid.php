@@ -322,7 +322,8 @@ class PayFluid
     }
 
     /**
-     * Verifies that the data sent to the integrator's redirect url is coming from PayFluid and has not been tampered with.
+     * Verifies that the data sent to the integrator's redirect url is coming
+     * from PayFluid and has not been tampered with.
      *
      * @param string $qs The query string PayFluid sends as part of the responseUrl
      * @param string $session The session value from secure credentials
@@ -331,7 +332,7 @@ class PayFluid
      */
     public static function verifyPayment(string $qs, string $session): array
     {
-        $payload = json_decode($qs, true, 512, JSON_BIGINT_AS_STRING);
+        $payload = json_decode(urldecode($qs), true, 512, JSON_BIGINT_AS_STRING);
         if (!array_key_exists("aapf_txn_signature", $payload)) {
             throw new Exception("verify payment: no signature found in query parameters");
         }
@@ -345,7 +346,7 @@ class PayFluid
         $queryParams = join("", array_values($payload));
 
         $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
-        if (!hash_equals($calculatedSignature, $signatureFromRequest)) {
+        if (!hash_equals(strtoupper($calculatedSignature), strtoupper($signatureFromRequest))) {
             throw new Exception("verify payment: signature is not valid");
         }
 
