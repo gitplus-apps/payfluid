@@ -3,8 +3,6 @@
 namespace Gitplus\PayFluid;
 
 
-use Exception;
-
 class Payment
 {
     /**

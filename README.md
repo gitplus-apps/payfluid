@@ -14,8 +14,8 @@ You will need composer to install this package. You can [get it here](https://ge
 
 require("vendor/autoload.php");
 
-use Gitplus\PayFluid\PayFluid;
-use Gitplus\PayFluid\Payment;
+use Gitplus\Payfluid\PayFluid;
+use Gitplus\Payfluid\Payment;
 
 // Create a new payfluid client instance.
 $payfluid = new PayFluid($apiId, $apiKey, $loginParameter);

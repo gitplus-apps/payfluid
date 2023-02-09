@@ -8,7 +8,7 @@
     "homepage": "https://github.com/gitplus-apps/payfluid",
     "autoload": {
         "psr-4": {
-            "Gitplus\\Payfluid\\": "src/"
+            "Gitplus\\PayFluid\\": "src/"
         }
     },
     "authors": [
