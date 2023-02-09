@@ -14,7 +14,7 @@
             "email": "yeboahnanaosei@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "alpha",
     "require": {
         "php": ">=7.4",
         "phpseclib/phpseclib": "~2.0",
