@@ -322,7 +322,7 @@ class PayFluid
     }
 
     /**
-     * Verifies that the data sent to the integrator's redirect url is indeed coming from PayFluid
+     * Verifies that the data sent to the integrator's redirect url is coming from PayFluid and has not been tampered with.
      *
      * @param string $qs The query string PayFluid sends as part of the responseUrl
      * @param string $session The session value from secure credentials
