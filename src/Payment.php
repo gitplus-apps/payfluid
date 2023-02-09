@@ -193,7 +193,6 @@ class Payment
         $this->currency = "GHS";
         $this->lang = "en";
         $this->otherInfo = "";
-        $this->customTxn = "";
 
         $now = new \DateTime();
         $this->dateTime = $now->format('Y-m-d\TH:i:s.v\Z');

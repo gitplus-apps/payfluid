@@ -230,8 +230,11 @@ class PayFluid
             'responseRedirectURL' => $payment->responseRedirectUrl,
             'session' => $credentials->session,
             'trxStatusCallbackURL' => $payment->trxStatusCallbackURL,
-            'customTxn' => $payment->customTxn,
         ];
+
+        if (!empty($payment->customTxn)) {
+            $requestBody["customTxn"] = $payment->customTxn;
+        }
 
         ksort($requestBody);
         $signature = $this->createSignature($credentials, $requestBody);
