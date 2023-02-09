@@ -254,18 +254,17 @@ class PayFluid
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("get payment link request failed: " . curl_error($ch));
+            throw new Exception("could not get payment link: " . curl_error($ch));
         }
 
         $response = json_decode($response);
         if ($response === false) {
-            throw new Exception("get payment link failed: could not decode json response from server: " . json_last_error_msg());
+            throw new Exception("could not get payment link: could not decode json response from server: " . json_last_error_msg());
         }
 
         if ($response->result_code !== "00") {
-            throw new Exception("get payment link failed: " . $response->result_message);
+            throw new Exception("could not get payment link: " . $response->result_message);
         }
-
 
         $paymentLink = new PaymentLink();
         $paymentLink->approvalCode = $response->approvalCode;
