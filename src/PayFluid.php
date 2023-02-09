@@ -213,7 +213,7 @@ class PayFluid
         try {
             $this->validatePaymentRequest($payment);
         } catch (Throwable $e) {
-            throw new InvalidPaymentRequestException("payment request is not valid: ". $e->getMessage());
+            throw new InvalidPaymentRequestException("invalid payment object: ". $e->getMessage());
         }
 
         $requestBody = [
