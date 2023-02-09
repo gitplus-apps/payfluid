@@ -195,6 +195,10 @@ class PayFluid
         if (empty($payment->reference)) {
             throw new InvalidPaymentRequestException("payment reference cannot be empty");
         }
+        $refLen = strlen($payment->reference);
+        if ($refLen > 10) {
+            throw new InvalidPaymentRequestException(sprintf("payment reference cannot be more than 10 characters: your reference '%s' is %d characters long",  $payment->reference, $refLen));
+        }
 
         // Validate redirect and callback urls
         if (empty($payment->redirectUrl)) {
