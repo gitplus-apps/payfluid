@@ -201,7 +201,7 @@ class PayFluid
      *
      * @param SecureCredentials $credentials
      * @param Payment $payment
-     * @return PaymentLink The redirect url
+     * @return PaymentLink A PaymentLink object with details about the payment link
      * @throws Exception
      */
     public function getPaymentLink(SecureCredentials $credentials, Payment $payment): PaymentLink
