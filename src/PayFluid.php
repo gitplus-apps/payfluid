@@ -329,7 +329,7 @@ class PayFluid
      * @return array
      * @throws Exception
      */
-    public function verifyPayment(string $qs, string $session): array
+    public static function verifyPayment(string $qs, string $session): array
     {
         $payload = json_decode($qs, true, 512, JSON_BIGINT_AS_STRING);
         if (!array_key_exists("aapf_txn_signature", $payload)) {
