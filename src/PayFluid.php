@@ -108,19 +108,6 @@ class PayFluid
                 $rsaPublicKey = $splitKekValue[0];
                 $sha256Salt = $splitKekValue[1];
                 return $headerLen;
-
-
-
-//                $headerLength = strlen($currentHeader);
-//                $headerKeyValue = explode(":", trim($currentHeader));
-//
-//                // Some headers do not have values so we skip them
-//                if (count($headerKeyValue) < 2) {
-//                    return $headerLength;
-//                }
-//
-//                $responseHeaders[strtolower($headerKeyValue[0])] = $headerKeyValue[1];
-//                return $headerLength;
             }
         ]);
 
@@ -138,12 +125,8 @@ class PayFluid
             throw new Exception("could not create secure credentials: " . $response->resultMessage);
         }
 
-//        $rsaPublicKeyAndsha256Salt = explode(".", $responseHeaders["kek"]);
-
         return new SecureCredentials(
             $response->session,
-//            $rsaPublicKeyAndsha256Salt[0],
-//            $rsaPublicKeyAndsha256Salt[1],
             $rsaPublicKey,
             $sha256Salt,
             $response->kekExpiry,
