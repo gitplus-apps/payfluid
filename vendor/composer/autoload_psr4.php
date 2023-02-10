@@ -7,5 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpseclib\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
-    'Gitplus\\Payfluid\\' => array($baseDir . '/src'),
+    'Gitplus\\PayFluid\\' => array($baseDir . '/src'),
 );
