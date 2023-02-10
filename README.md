@@ -72,8 +72,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         // The request to your redirect URL will come with a 'qs' query parameter.
         // This is where you use the session value from when you created your secure
         // credentials. Throws an exception if anything goes wrong. The $transactionDetails
-        // object has detiails on whether the transaction was successful or not.
-        $transactionDetails = PayFluid::verifyRedirectDetails($_GET["qs"], $session);
+        // object has details on whether the transaction was successful or not.
+        $transactionDetails = PayFluid::verifyPayment($_GET["qs"], $session);
     } catch (\Throwable $e) {
         echo "Verifying payment failed: " . $e->getMessage();
     }   
@@ -93,8 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
         // NOTE: The session is from either your secureCredentials or paymentLink object
         // created in earlier examples. The $transactionDetails object has details on 
-        // the sucess or otherwise of the transaction.
-        $transactionDetails = PayFluid::verifyTransacation($payload, $session);
+        // the success or otherwise of the transaction.
+        $transactionDetails = PayFluid::verifyPayment($payload, $session);
     } catch (\Throwable $e) {
         echo "Verifying transaction failed: " . $e->getMessage();
     }
