@@ -56,7 +56,7 @@ try {
     // Create a new PayFluid client instance. The forth(4th) parameter is
     // a boolean that indicates whether you are in live mode or test mode.
     // true for live mode, false for test mode.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // Get secure credentials to authenticate with the server.
     // The returned $credentials object here has your 'session' value.
@@ -156,12 +156,10 @@ particular payment.
 require("vendor/autoload.php");
 
 use Gitplus\Payfluid\PayFluid;
-use Gitplus\Payfluid\Payment;
-
 
 try {
     // Create a new PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // This will return a PaymentStatus object with details information on the status of the payment.
     //
@@ -192,7 +190,7 @@ use Gitplus\Payfluid\Payment;
 
 try {
     // Create a new PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // Get secure credentials for subsequent requests to the API.
     // The returned $credentials object here has your 'session' value.
@@ -312,7 +310,7 @@ try {
     
      
     // Create the PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // Let's generate credentials.
     // Remember the returned $credentials object here has your session value.
@@ -340,7 +338,7 @@ If you are finding it difficult to store your session value you can pass it via 
 
 ```php
 <?php
-$payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+$payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
 $credentials = $payfluid->getSecureCredentials($phone);
 
 $payment = new Payment();
