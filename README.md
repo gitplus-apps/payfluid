@@ -261,7 +261,7 @@ try {
         ->receiptFeedbackPhone("+233XXXXXXX")               // Override the phone number that gets the receipt
         ->receiptFeedbackEmail("user@domain.com")           // Override the email that receives the receipt
         ->daysUntilLinkExpires(3)                           // Determine how long the payment link should be valid for
-        ->canPayMultipleTimes(true);                        // Payment links are one time. This will make the link reusable
+        ->canPayMultipleTimes(true)                         // Payment links are one time. This will make the link reusable
         ->displayPicture("https://link/to/publicly/accessible/image");  // Set your own image to be displayed on the payment page.
         
   
