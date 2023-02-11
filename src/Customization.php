@@ -332,6 +332,7 @@ class Customization
             $payload["xtraCustomerInput"] = $customerInputs;
         }
 
+        ksort($payload);
         return $payload;
     }
 

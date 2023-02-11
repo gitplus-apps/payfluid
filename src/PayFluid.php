@@ -297,7 +297,7 @@ class PayFluid
             $requestBody["customTxn"] = $payment->customization()->getRaw();
         }
 
-        array_multisort($requestBody);
+        ksort($requestBody);
         $signature = $this->createSignature($credentials, $requestBody);
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);
