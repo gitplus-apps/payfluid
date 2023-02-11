@@ -1,4 +1,10 @@
 # A simple package that wraps [PayFluid's payment API](https://documenter.getpostman.com/view/1587357/SWDzdLcg#3b4e3a30-4714-4d21-a53a-1ca938618ede)
+This package helps you integrate PayFluid's payment system into your application in an easy and simple way.  
+With this package you can do three main things: 
+* Generate a payment link to collect payments.
+* Verify payment details sent to your redirect url and callback url.
+* Get the status of a previously made payment.
+* In addition, the package makes it easy to customize the payment page and also customize how the payment link behaves.
 
 ## Contents
 
