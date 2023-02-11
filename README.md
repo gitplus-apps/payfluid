@@ -228,7 +228,7 @@ use Gitplus\PayFluid\CustomerInput;
 try {    
     // Create a new customization object.
     $customization = new Customization();
-    $customization->editAmount(true)      // The payment amount can be edited by the user
+    $customization->editAmount(true)            // The payment amount can be edited by the user
         ->minimumAmount(1.0)                    // Enforce the minimum amount to pay
         ->maximumAmount(30.0)                   // Enforce the maximum amount to pay
         ->borderTheme("#a3ffee")                // Set a color for the page
