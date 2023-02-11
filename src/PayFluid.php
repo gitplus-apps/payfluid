@@ -454,7 +454,7 @@ class PayFluid
         $status->maskedInstrument = $payload["aapf_txn_maskedInstr"];
         $status->payRef = $payload["aapf_txn_payLink"];
         $status->payScheme = $payload["aapf_txn_payScheme"];
-        $status->payFluidTransactionRef = $payload["aapf_txn_ref"];
+        $status->payFluidTransRef = $payload["aapf_txn_ref"];
         $status->statusCode = $payload["aapf_txn_sc"];
         $status->statusString = $payload["aapf_txn_sc_msg"];
         $status->signature = $signatureFromRequest;
