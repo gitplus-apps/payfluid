@@ -258,7 +258,7 @@ try {
         ->maximumAmount(30.0)                   // Enforce the maximum amount to pay
         ->borderTheme("#a3ffee")                // Set a color for the page
         ->receiptMessage("Thank you for your purchase")     // Override the message sent in receipt
-        ->receiptFeedbackPhone("+233XXXXXXX")               // Override the phone number that gets the receipt
+        ->receiptFeedbackPhone("233XXXXXXX")               // Override the phone number that gets the receipt
         ->receiptFeedbackEmail("user@domain.com")           // Override the email that receives the receipt
         ->daysUntilLinkExpires(3)                           // Determine how long the payment link should be valid for
         ->canPayMultipleTimes(true)                         // Payment links are one time. This will make the link reusable
