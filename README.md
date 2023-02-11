@@ -364,4 +364,4 @@ If you come across any issue or a problem you can kindly [report it here](https:
 <br>
 
 ## 👊 CONTRIBUTIONS
-Contributions and improvements are welcomed.
+Contributions and improvements are welcome
