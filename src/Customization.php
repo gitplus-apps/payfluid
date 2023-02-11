@@ -296,6 +296,11 @@ class Customization
         return $this;
     }
 
+    /**
+     * Returns the entire customization as an array
+     *
+     * @return array
+     */
     public function getRaw(): array
     {
         $payload = [
@@ -331,7 +336,7 @@ class Customization
     }
 
     /**
-     * Returns a JSON representation of this customaziation
+     * Returns a JSON representation of this customization
      *
      * @return string
      * @throws Exception
