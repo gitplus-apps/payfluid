@@ -304,16 +304,16 @@ class Customization
     public function getRaw(): array
     {
         $payload = [
-            "editAmt" => $this->editAmount,
-            "minAmt" => $this->minAmount,
-            "maxAmt" => $this->maxAmount,
             "borderTheme" => $this->borderTheme,
-            "receiptSxMsg" => $this->receiptMsg,
-            "receiptFeedbackPhone" => $this->receiptFeedbackPhone,
-            "receiptFeedbackEmail" => $this->receiptFeedbackEmail,
-            "payLinkExpiryInDays" => $this->payLinkExpiryInDays,
-            "payLinkCanPayMultipleTimes" => $this->canPayMultipleTimes,
             "displayPicture" => $this->displayPicture,
+            "editAmt" => $this->editAmount,
+            "maxAmt" => $this->maxAmount,
+            "minAmt" => $this->minAmount,
+            "receiptFeedbackEmail" => $this->receiptFeedbackEmail,
+            "receiptFeedbackPhone" => $this->receiptFeedbackPhone,
+            "receiptSxMsg" => $this->receiptMsg,
+            "payLinkCanPayMultipleTimes" => $this->canPayMultipleTimes,
+            "payLinkExpiryInDays" => $this->payLinkExpiryInDays,
         ];
 
         if (!empty($this->customerInputs)) {
