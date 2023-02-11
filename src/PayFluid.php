@@ -300,7 +300,7 @@ class PayFluid
             $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
         if ($payment->hasCustomization()) {
-            $requestBody["customTxn"] = $payment->customization()->getRaw();
+            $requestBody["customTxn"] = $payment->customization()->toArray();
         }
 
         ksort($requestBody);

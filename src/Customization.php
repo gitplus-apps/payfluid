@@ -189,11 +189,11 @@ class Customization
         $phone = trim($phone);
         if (strlen($phone) < 10) {
             throw new Exception(
-                sprintf("page customization: phone number cannot be less than 10 digits; the supplied phone number is %d digits long", strlen($phone))
+                sprintf("customization: phone number cannot be less than 10 digits; the supplied phone number is %d digits long", strlen($phone))
             );
         }
         if (!is_numeric($phone)) {
-            throw new Exception(sprintf("page customization: '%s' is not a valid phone number: only digits allowed", $phone));
+            throw new Exception(sprintf("customization: '%s' is not a valid phone number: only digits allowed", $phone));
         }
         $this->receiptFeedbackPhone = $phone;
         return $this;
@@ -211,7 +211,7 @@ class Customization
     {
         $email = trim($email);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception(sprintf("page customization: email '%s' is not valid", $email));
+            throw new Exception(sprintf("customization: email '%s' is not valid", $email));
         }
         $this->receiptFeedbackEmail = $email;
         return $this;
@@ -249,7 +249,7 @@ class Customization
     {
         $imageUrl = trim($imageUrl);
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            throw new Exception("page customization: invalid redirect url");
+            throw new Exception("customization: invalid redirect url");
         }
         $this->displayPicture = $imageUrl;
         return $this;
@@ -265,12 +265,12 @@ class Customization
      * dues, fees from a group, you can send this same link to
      * all members of the group for them to pay.
      *
-     * @param bool $canPay
+     * @param bool $canPayMultiple
      * @return $this
      */
-    public function canPayMultipleTimes(bool $canPay): self
+    public function canPayMultipleTimes(bool $canPayMultiple): self
     {
-        $this->canPayMultipleTimes = $canPay;
+        $this->canPayMultipleTimes = $canPayMultiple;
         return $this;
     }
 
@@ -289,7 +289,7 @@ class Customization
             isset($this->customerInputs) &&
             count($this->customerInputs) === self::MAX_CUSTOMER_INPUTS
         ) {
-            throw new Exception(sprintf("page customization: maximum number of '%d' extra customer inputs reached", self::MAX_CUSTOMER_INPUTS));
+            throw new Exception(sprintf("customization: maximum number of '%d' extra customer inputs reached", self::MAX_CUSTOMER_INPUTS));
         }
 
         $this->customerInputs[] = $customerInput;
@@ -301,7 +301,7 @@ class Customization
      *
      * @return array
      */
-    public function getRaw(): array
+    public function toArray(): array
     {
         $payload = [
             "borderTheme" => $this->borderTheme,
@@ -320,6 +320,15 @@ class Customization
             $customerInputs = [];
 
             foreach ($this->customerInputs as $input) {
+
+                // You cannot have a select input type without any options
+                if (
+                    $input->getType() === CustomerInput::TYPE_SELECT &&
+                    count($input->getOptions()) === 0
+                ) {
+                    throw new Exception(sprintf("customization: CustomerInput with type '%s' must have at least one option set", CustomerInput::TYPE_SELECT));
+                }
+
                 $customerInputs[] = [
                     "label" => $input->getLabel(),
                     "options" => $input->getOptions(),
@@ -344,10 +353,10 @@ class Customization
      */
     public function getJsonEncoded(): string
     {
-        $payload = $this->getRaw();
+        $payload = $this->toArray();
         $encoding = json_encode($payload);
         if ($encoding === false) {
-            throw new Exception("page customization: failed to json encode customization: " . json_last_error_msg());
+            throw new Exception("customization: failed to json encode customization: " . json_last_error_msg());
         }
         return $encoding;
     }

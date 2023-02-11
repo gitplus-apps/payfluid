@@ -258,8 +258,7 @@ try {
     // The default values will be used if you don't set them.
     // If you do NEED to change them, you can do so.
     // Here they with their default values:
-    $payment->currency("GHS")
-        ->lang("en");
+    $payment->currency("GHS")->lang("en");
     
     // Optional fields
     $payment->description("Enter description for the payment")
