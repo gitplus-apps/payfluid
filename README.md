@@ -9,26 +9,21 @@ With this package you can do three main things:
 ## Contents
 
 - [⏳ Installation](#-installation)
-  
 
 - [👼 Basic Usage](#-basic-usage)
    - [Quick Start - Generate Payment Link](#1-generate-payment-link)
    - [Verify Payment - (Redirect URL)](#2-verify-transaction-on-your-redirect-url)
    - [Verify Payment - (Callback/Webhook URL)](#3-verify-transaction-on-your-callbackwebhook-url)
    - [Get Payment Status](#4-check-or-confirm-the-status-of-a-previous-payment)
-  
 
 - [💪 Advanced Usage](#-advanced-usage)
   - [Extra Required Fields](#1-extra-required-fields)
   - [Customize Payment Page and Link](#2-customize-payment-page-and-link-behaviour)
-  
 
 - [✌️ Tips and Tricks](#-tips)
   - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
-  
 
 - [⚠️ Issues](#-issues)
-
 -  [👊 Contributions](#-contributions)
 
 <br>
