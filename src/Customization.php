@@ -296,13 +296,7 @@ class Customization
         return $this;
     }
 
-    /**
-     * Returns a JSON representation of this customaziation
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function encode(): string
+    public function getRaw(): array
     {
         $payload = [
             "editAmt" => $this->editAmount,
@@ -333,11 +327,22 @@ class Customization
             $payload["xtraCustomerInput"] = $customerInputs;
         }
 
+        return $payload;
+    }
+
+    /**
+     * Returns a JSON representation of this customaziation
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getEncoded(): string
+    {
+        $payload = $this->getRaw();
         $encoding = json_encode($payload);
         if ($encoding === false) {
             throw new Exception("page customization: failed to json encode customization: " . json_last_error_msg());
         }
-
         return $encoding;
     }
 }
