@@ -5,8 +5,8 @@ namespace Gitplus\PayFluid;
 
 class CustomerInput
 {
-    public const INPUT_TYPE_TEXT = "input";
-    public const INPUT_TYPE_SELECT = "select";
+    public const TYPE_TEXT = "input";
+    public const TYPE_SELECT = "select";
     private string $label;
     private string $placeholder;
     private string $type;

@@ -274,18 +274,18 @@ try {
     // Let's create our first input. This will be a text input.
     $textInput = new CustomerInput();
     $textInput->label("Church Membership ID")    // The label for the input
-        ->placeholder("Membership ID #")              // The placeholder for the input
-        ->inputType(CustomerInput::INPUT_TYPE_TEXT)   // The type of input
-        ->required(true);                             // Indicate whether the input is required or not.
+        ->placeholder("Membership ID #")         // The placeholder for the input
+        ->inputType(CustomerInput::TYPE_TEXT)    // The type of input
+        ->required(true);                        // Indicate whether the input is required or not.
         
     
     // Let's create another input. This will be a select dropdown.
     $selectInput = new CustomerInput();
-    $selectInput->label("Offering Type")                // Label for the input field
-        ->placeholder("Offering Type 2")                // Placeholder value for the field
-        ->inputType(CustomerInput::INPUT_TYPE_SELECT)   // Set the input as a select dropdown
-        ->setOption("key", "value")                     // Set the options that will be in the dropdown               
-        ->setOption("key2", "value2");                  // You can set more options for the dropdown
+    $selectInput->label("Offering Type")          // Label for the input field
+        ->placeholder("Offering Type 2")          // Placeholder value for the field
+        ->inputType(CustomerInput::TYPE_SELECT)   // Set the input as a select dropdown
+        ->setOption("key", "value")               // Set the options that will be in the dropdown               
+        ->setOption("key2", "value2");            // You can set more options for the dropdown
       
       
     // Add your inputs to your customization object
