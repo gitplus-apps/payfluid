@@ -124,6 +124,12 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         // the code means.
         if ($paymentStatus->statusCode === "0") {
             echo "Payment successful";
+            
+            // You can convert the payment status to a JSON string and perhaps store it for future reference
+            $statusAsJson = $paymentStatus->toJson();
+            
+            // You can also retrieve it as an array if you want;
+            $statusAsArray = $paymentStatus->toArray();
         } else {
             echo "Payment failed: " . $paymentStatus->statusString;
         }
