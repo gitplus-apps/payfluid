@@ -119,7 +119,7 @@ class Customization
      * @param bool $isEditable
      * @return $this
      */
-    public function amountIsEditable(bool $isEditable): self
+    public function editAmount(bool $isEditable): self
     {
         $this->editAmount = $isEditable;
         return $this;
