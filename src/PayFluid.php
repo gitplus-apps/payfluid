@@ -295,11 +295,11 @@ class PayFluid
         }
         if ($payment->hasCustomization()) {
             $customTxn = $payment->customization()->getRaw();
-            krsort($customTxn);
+            krsort($customTxn, SORT_ASC);
             $requestBody["customTxn"] = $customTxn;
         }
 
-        ksort($requestBody);
+        ksort($requestBody, SORT_ASC);
         $signature = $this->createSignature($credentials, $requestBody);
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);

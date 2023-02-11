@@ -321,7 +321,7 @@ class Customization
 
             foreach ($this->customerInputs as $input) {
                 $customerInputs[] = [
-                    "label" =>  $input->getLabel(),
+                    "label" => $input->getLabel(),
                     "placeholder" => $input->getPlaceholder(),
                     "type" => $input->getType(),
                     "required" => $input->getRequired(),
@@ -332,7 +332,7 @@ class Customization
             $payload["xtraCustomerInput"] = $customerInputs;
         }
 
-        krsort($payload);
+        krsort($payload, SORT_ASC);
         return $payload;
     }
 
