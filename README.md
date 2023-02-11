@@ -251,8 +251,8 @@ try {
         ->email($email)
         ->phone($phoneNumber)
         ->name($name)
-        ->reference(bin2hex(random_bytes(5)));
-        ->redirectUrl("https://your/redirect/url")
+        ->reference(bin2hex(random_bytes(5)))
+        ->redirectUrl("https://your/redirect/url");
   
     // These fields are also required, but they have default values, so you can ignore them.
     // The default values will be used if you don't set them.
