@@ -37,7 +37,6 @@ composer require gitplus/payfluid
 
 ## 👼 BASIC USAGE
 
----
 > #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.  
 
 > #### Kindly note that error handling has been intentionally left out of these examples for brevity.
