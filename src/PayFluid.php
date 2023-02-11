@@ -195,6 +195,8 @@ class PayFluid
     private function createSignature(SecureCredentials $credentials, array $requestBody): string
     {
         $requestBodyAsString = join("", array_values($requestBody));
+        var_dump($requestBodyAsString);
+        exit();
         $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
 
         $rsa = new RSA();
