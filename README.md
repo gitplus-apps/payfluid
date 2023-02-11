@@ -325,7 +325,7 @@ try {
     $paymentLink->webUrl;
 } catch (\Throwable $e) {
     // Handle error
-    echo "Generating payment url: " . $e->getMessage();
+    echo "Generating payment url failed: " . $e->getMessage();
 }
 ```
 
