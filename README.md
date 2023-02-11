@@ -2,7 +2,6 @@
 
 ## Contents
 
----
 - [⏳ Installation](#-installation)
   
 
@@ -30,7 +29,6 @@
 
 ## ⏳ INSTALLATION
 
----
 You will need composer to install this package. You can [get it here](https://getcomposer.org/)
 ```bash
 composer require gitplus/payfluid
@@ -178,7 +176,6 @@ try {
 
 ## 👷 ADVANCED USAGE
 
----
 ### 1. Extra required fields
 Here are details about some extra required fields. These fields are required
 but they have default fields so you can ignore them.
@@ -336,7 +333,6 @@ try {
 
 ## ✌️️ TIPS
 
----
 ### 1. Pass and retrieve session value from redirect or callback url.
 If you are finding it difficult to store your session value you can pass it via your redirect or callback url.  
 
@@ -366,12 +362,10 @@ $session = $_GET["session"];
 
 ## ⚠️ ISSUES
 
----
 If you come across any issue or a problem you can kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
 
 <br>
 
 ## 👊 CONTRIBUTIONS
 
----
 Contributions and improvements are welcomed wholeheartedly.
