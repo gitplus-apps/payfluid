@@ -60,7 +60,7 @@ class PayFluid
         ]
     ];
 
-    protected bool $testMode;
+    protected bool $inLiveMode;
 
     /**
      * Instantiates a new PayFluid client.
@@ -68,20 +68,19 @@ class PayFluid
      * @param string $apiId The API id supplied from PayFluid
      * @param string $apiKey The API key supplied from PayFluid
      * @param string $loginParameter The login parameter supplied from PayFluid
-     * @param bool $testMode Indicates whether you are in test mode or live mode.
-     *                       Defaults to false, meaning you are in live mode
+     * @param bool $inLiveMode Indicates whether you are in live mode or test mode; true for live mode, false for test mode
      */
-    public function __construct(string $apiId, string $apiKey, string $loginParameter, bool $testMode)
+    public function __construct(string $apiId, string $apiKey, string $loginParameter, bool $inLiveMode)
     {
         $this->apiId = $apiId;
         $this->apiKey = $apiKey;
         $this->loginParameter = $loginParameter;
-        $this->testMode = $testMode;
+        $this->inLiveMode = $inLiveMode;
     }
 
     private function getEndpoint(string $endpoint)
     {
-        $mode = $this->testMode ? "test" : "live";
+        $mode = $this->inLiveMode ? "live" : "test";
         return $this->endpoints[$mode][$endpoint];
     }
 
