@@ -13,13 +13,13 @@ class PaymentStatus
     public string $dateTime;
     public string $upstreamReference;
     public string $upstreamErrorCodeAndMsg;
-    public string $maskedPhoneNumber;
+    public string $maskedInstrument;
 
     public string $payReference;
     public string $payScheme;
 
     public string $payFluidReference;
-    public string $payFluidErrorCode;
-    public string $payFluidErrorMsg;
+    public string $payFluidStatusCode;
+    public string $payFluidStatusMsg;
     public string $signature;
 }

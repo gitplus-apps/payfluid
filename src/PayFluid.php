@@ -294,7 +294,7 @@ class PayFluid
             $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
         if ($payment->hasCustomization()) {
-            $requestBody["customTxn"] = $payment->customization()->getJsonEncoded();
+            $requestBody["customTxn"] = $payment->customization()->getRaw();
         }
 
         ksort($requestBody);
@@ -445,12 +445,12 @@ class PayFluid
         $status->dateTime = $payload["aapf_txn_datetime"];
         $status->upstreamReference = $payload["aapf_txn_gw_ref"];
         $status->upstreamErrorCodeAndMsg = $payload["aapf_txn_gw_sc"];
-        $status->maskedPhoneNumber = $payload["aapf_txn_maskedInstr"];
+        $status->maskedInstrument = $payload["aapf_txn_maskedInstr"];
         $status->payReference = $payload["aapf_txn_payLink"];
         $status->payScheme = $payload["aapf_txn_payScheme"];
         $status->payFluidReference = $payload["aapf_txn_ref"];
-        $status->payFluidErrorCode = $payload["aapf_txn_sc"];
-        $status->payFluidErrorMsg = $payload["aapf_txn_sc_msg"];
+        $status->payFluidStatusCode = $payload["aapf_txn_sc"];
+        $status->payFluidStatusMsg = $payload["aapf_txn_sc_msg"];
         $status->signature = $signatureFromRequest;
         return $status;
     }
