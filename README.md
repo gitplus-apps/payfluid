@@ -359,11 +359,9 @@ $session = $_GET["session"];
 <br>
 
 ## ⚠️ ISSUES
-
 If you come across any issue or a problem you can kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
 
 <br>
 
 ## 👊 CONTRIBUTIONS
-
-Contributions and improvements are welcomed wholeheartedly.
+Contributions and improvements are welcomed.
