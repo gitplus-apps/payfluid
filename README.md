@@ -321,7 +321,7 @@ try {
     // and 'payReference' values. You will need them later for verification.
     $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
     
-    // Redirect your user to the payment page.
+    // Redirect the user to your customized payment page.
     $paymentLink->webUrl;
 } catch (\Throwable $e) {
     // Handle error
