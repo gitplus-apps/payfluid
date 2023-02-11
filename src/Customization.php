@@ -300,6 +300,7 @@ class Customization
      * Returns the entire customization as an array
      *
      * @return array
+     * @throws Exception
      */
     public function toArray(): array
     {

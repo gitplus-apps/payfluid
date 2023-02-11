@@ -201,15 +201,14 @@ class PayFluid
 //            $requestBodyAsString .= $value;
 //        });
 
-        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
-
         $rsa = new RSA();
+        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
         $keyLoaded = $rsa->loadKey($credentials->rsaPublicKey);
         if (!$keyLoaded) {
             throw new Exception("create signature: loading rsa public key failed");
         }
 
-        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
+        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
         return base64_encode($rsa->encrypt($hash));
     }
 
@@ -313,7 +312,7 @@ class PayFluid
 
 
         $ch = curl_init($this->getEndpoint("getPaymentLink"));
-        $optionsSet = curl_setopt_array($ch, [
+        $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
@@ -322,7 +321,7 @@ class PayFluid
             ],
             CURLOPT_POSTFIELDS => $requestBody
         ]);
-        if (!$optionsSet) {
+        if (!$optionsOk) {
             throw new Exception("get payment link: setting curl options failed: " . curl_error($ch));
         }
 
@@ -372,6 +371,13 @@ class PayFluid
      */
     public function getPaymentStatus(string $payReference, string $session): PaymentStatus
     {
+        if ($payReference === "") {
+            throw new InvalidArgumentException("confirm payment status: the payReference argument cannot be empty");
+        }
+        if ($session === "") {
+            throw new InvalidArgumentException("confirm payment status: the session argument cannot be empty");
+        }
+
         $ch = curl_init($this->getEndpoint("paymentStatus"));
         $optionsSet = curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
@@ -398,31 +404,31 @@ class PayFluid
     }
 
     /**
-     * Verifies that the data sent from PayFluid to the integrator is coming from
-     * PayFluid and has not been tampered with.
+     * Verifies that the data sent from PayFluid to the integrator is indeed
+     * coming from PayFluid and has not been tampered with.
      *
-     * @param string|array $transactionDetails Either a valid JSON string or an array
+     * @param string|array $paymentDetails Either a valid JSON string or an array
      * @param string $session The session value from secure credentials
      * @return PaymentStatus
      * @throws Exception
      */
-    public static function verifyPayment($transactionDetails, string $session): PaymentStatus
+    public static function verifyPayment($paymentDetails, string $session): PaymentStatus
     {
         $payload = null;
         switch (true) {
-            case is_string($transactionDetails):
-                $payload = json_decode(urldecode($transactionDetails), true, 512, JSON_BIGINT_AS_STRING);
+            case is_string($paymentDetails):
+                $payload = json_decode(urldecode($paymentDetails), true, 512, JSON_BIGINT_AS_STRING);
                 if ($payload === null) {
                     throw new Exception("verify transaction: error json decoding transaction details: " . json_last_error_msg());
                 }
                 break;
 
-            case is_array($transactionDetails):
-                $payload = $transactionDetails;
+            case is_array($paymentDetails):
+                $payload = $paymentDetails;
                 break;
 
             default:
-                throw new InvalidArgumentException("verify transaction: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($transactionDetails));
+                throw new InvalidArgumentException("verify transaction: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($paymentDetails));
         }
 
         if (!array_key_exists("aapf_txn_signature", $payload)) {
@@ -436,7 +442,6 @@ class PayFluid
         unset($payload["aapf_txn_signature"]);
 
         $queryParams = join("", array_values($payload));
-
         $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
         if (!hash_equals(strtoupper($calculatedSignature), strtoupper($signatureFromRequest))) {
             throw new Exception("verify transaction: signature is not valid");
@@ -452,7 +457,7 @@ class PayFluid
         $status->upStreamRef = $payload["aapf_txn_gw_ref"];
         $status->upStreamDebitStatus = $payload["aapf_txn_gw_sc"];
         $status->maskedInstrument = $payload["aapf_txn_maskedInstr"];
-        $status->payRef = $payload["aapf_txn_payLink"];
+        $status->payReference = $payload["aapf_txn_payLink"];
         $status->payScheme = $payload["aapf_txn_payScheme"];
         $status->payFluidTransRef = $payload["aapf_txn_ref"];
         $status->statusCode = $payload["aapf_txn_sc"];

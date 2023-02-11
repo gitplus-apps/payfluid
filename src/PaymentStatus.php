@@ -75,7 +75,7 @@ class PaymentStatus
      *
      * @var string
      */
-    public string $payRef;
+    public string $payReference;
 
     /**
      * The payment scheme used. E.g MTNMM, MASTERCARD etc.
@@ -132,7 +132,7 @@ class PaymentStatus
             "upStreamRef" => $this->upStreamRef,
             "upStreamDebitStatus" => $this->upStreamDebitStatus,
             "maskedInstrument" => $this->maskedInstrument,
-            "payRef" => $this->payRef,
+            "payReference" => $this->payReference,
             "payScheme" => $this->payScheme,
             "payFluidTransRef" => $this->payFluidTransRef,
             "statusCode" => $this->statusCode,
