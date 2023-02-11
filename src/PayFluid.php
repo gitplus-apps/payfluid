@@ -294,12 +294,10 @@ class PayFluid
             $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
         if ($payment->hasCustomization()) {
-            $customTxn = $payment->customization()->getRaw();
-            krsort($customTxn, SORT_ASC);
-            $requestBody["customTxn"] = $customTxn;
+            $requestBody["customTxn"] = $payment->customization()->getRaw();
         }
 
-        ksort($requestBody, SORT_ASC);
+        array_multisort($requestBody);
         $signature = $this->createSignature($credentials, $requestBody);
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);
