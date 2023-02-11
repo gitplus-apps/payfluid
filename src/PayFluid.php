@@ -335,8 +335,9 @@ class PayFluid
                 )
             );
         }
+
         if ($result->result_code !== "00") {
-            throw new Exception("get payment link: " . $result->result_message);
+            throw new Exception(sprintf("get payment link: request failed with code [%d] and message [%s]", $result->result_code, $result->result_message));
         }
 
         $paymentLink = new PaymentLink();
