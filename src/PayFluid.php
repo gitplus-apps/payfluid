@@ -195,8 +195,6 @@ class PayFluid
     private function createSignature(SecureCredentials $credentials, array $requestBody): string
     {
         $requestBodyAsString = join("", array_values($requestBody));
-        var_dump($requestBodyAsString);
-        exit();
         $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
 
         $rsa = new RSA();
@@ -442,17 +440,17 @@ class PayFluid
         $status->amount = $payload["aapf_txn_amt"];
         $status->redirectUrl = $payload["aapf_txn_clientRspRedirectURL"];
         $status->callbackUrl = $payload["aapf_txn_clientTxnWH"];
-        $status->clientReference = $payload["aapf_txn_cref"];
+        $status->clientRef = $payload["aapf_txn_cref"];
         $status->currency = $payload["aapf_txn_currency"];
         $status->dateTime = $payload["aapf_txn_datetime"];
-        $status->upstreamReference = $payload["aapf_txn_gw_ref"];
-        $status->upstreamErrorCodeAndMsg = $payload["aapf_txn_gw_sc"];
+        $status->upStreamRef = $payload["aapf_txn_gw_ref"];
+        $status->upStreamDebitStatus = $payload["aapf_txn_gw_sc"];
         $status->maskedInstrument = $payload["aapf_txn_maskedInstr"];
-        $status->payReference = $payload["aapf_txn_payLink"];
+        $status->payRef = $payload["aapf_txn_payLink"];
         $status->payScheme = $payload["aapf_txn_payScheme"];
-        $status->payFluidReference = $payload["aapf_txn_ref"];
-        $status->payFluidStatusCode = $payload["aapf_txn_sc"];
-        $status->payFluidStatusMsg = $payload["aapf_txn_sc_msg"];
+        $status->payFluidTransactionRef = $payload["aapf_txn_ref"];
+        $status->statusCode = $payload["aapf_txn_sc"];
+        $status->statusString = $payload["aapf_txn_sc_msg"];
         $status->signature = $signatureFromRequest;
         return $status;
     }

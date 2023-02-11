@@ -116,8 +116,17 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         //
         // Throws an exception if anything goes wrong.
         // Don't worry about calling urldecode() on the 'qs' query parameter. It is handled internally.
-        // The $transactionDetails object returned will have details on whether the transaction was successful or not.
-        $transactionDetails = PayFluid::verifyPayment($_GET["qs"], $session);
+        // The $paymentStatus object returned will have details on whether the transaction was successful or not.
+        $paymentStatus = PayFluid::verifyPayment($_GET["qs"], $session);
+        
+        // If statusCode = '0' then the payment was successful. Any other value
+        // means the transaction failed. The statusString field will explain what
+        // the code means.
+        if ($paymentStatus->statusCode === "0") {
+            echo "Payment successful";
+        } else {
+            echo "Payment failed: " . $paymentStatus->statusString;
+        }
     } catch (\Throwable $e) {
         echo "Verifying payment failed: " . $e->getMessage();
     }   
@@ -140,7 +149,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // NOTE:
         // The $session is from either your $secureCredentials or $paymentLink objects created earlier.
         // The $transactionDetails object returned has details on the success or otherwise of the payment.
-        $transactionDetails = PayFluid::verifyPayment($payload, $session);
+        $statusCode = PayFluid::verifyPayment($payload, $session);
+        
+        // If statusCode = '0' then the payment was successful. Any other value
+        // means the transaction failed. The statusString field will explain what
+        // the code means.
+        if ($paymentStatus->statusCode === "0") {
+            echo "Payment successful";
+            
+            // You can convert the payment status to a JSON string and perhaps store it for future reference
+            $statusAsJson = $paymentStatus->toJson();
+            
+            // You can also retrieve it as an array if you want;
+            $statusAsArray = $paymentStatus->toArray();
+        } else {
+            echo "Payment failed: " . $paymentStatus->statusString;
+        }
     } catch (\Throwable $e) {
         echo "Verifying payment failed: " . $e->getMessage();
     }
@@ -167,6 +191,21 @@ try {
     // The $payReference is from the $paymentLink object you created earlier.
     // The $session is from either the $paymentLink or $credentials objects you created earlier.
     $paymentStatus = $payfluid->getPaymentStatus($payReference, $session);
+    
+    // If statusCode = '0' then the payment was successful. Any other value
+    // means the transaction failed. The statusString field will explain what
+    // the code means.
+    if ($paymentStatus->statusCode === "0") {
+        echo "Payment successful";
+            
+        // You can convert the payment status to a JSON string and perhaps store it for future reference
+        $statusAsJson = $paymentStatus->toJson();
+        
+        // You can also retrieve it as an array if you want;
+        $statusAsArray = $paymentStatus->toArray();
+    } else {
+        echo "Payment failed: " . $paymentStatus->statusString;
+    }
 } catch (\Throwable $e) {
     // Handle error
     echo "Getting payment status failed: " . $e->getMessage();
