@@ -354,8 +354,6 @@ $payment->amount(1)
 
 // You can later retrieve them when the redirect or callback hits your endpoint.
 $session = $_GET["session"];
-
-// Later 
 ```
 
 <br>
