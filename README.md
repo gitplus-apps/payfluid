@@ -263,7 +263,7 @@ try {
     
     // Optional fields
     $payment->description("Enter description for the payment")
-        ->callbackUrl("https://your/callback_or_webhook/url");
+        ->callbackUrl("https://your/callback_or_webhook/url")
         ->otherInfo("Any extra information");
     
     // Use both the payment object and secure credentials to get a payment link.
