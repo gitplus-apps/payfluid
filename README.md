@@ -1,5 +1,33 @@
 # A simple package that wraps [PayFluid's payment API](https://documenter.getpostman.com/view/1587357/SWDzdLcg#3b4e3a30-4714-4d21-a53a-1ca938618ede)
 
+## Contents
+
+---
+- [⏳ Installation](#-installation)
+  
+
+- [👼 Basic Usage](#-basic-usage)
+   - [Quick Start - Generate Payment Link](#1-generate-payment-link)
+   - [Verify Payment - (Redirect URL)](#2-verify-transaction-on-your-redirect-url)
+   - [Verify Payment - (Callback/Webhook URL)](#3-verify-transaction-on-your-callbackwebhook-url)
+   - [Get Payment Status](#4-check-or-confirm-the-status-of-a-previous-payment)
+  
+
+- [👷 Advanced Usage](#-advanced-usage)
+  - [Extra Required Fields](#1-extra-required-fields)
+  - [Customize Payment Page and Link](#2-customize-payment-page-and-link-behaviour)
+  
+
+- [✌️ Tips and Tricks](#-tips)
+  - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
+  
+
+- [⚠️ Issues](#-issues)
+
+-  [👊 Contributions](#-contributions)
+
+<br>
+
 ## ⏳ INSTALLATION
 
 ---
@@ -302,6 +330,36 @@ try {
     // Handle error
     echo "Generating payment url: " . $e->getMessage();
 }
+```
+
+<br>
+
+## ✌️️ TIPS
+
+---
+### 1. Pass and retrieve session value from redirect or callback url.
+If you are finding it difficult to store your session value you can pass it via your redirect or callback url.  
+
+```php
+<?php
+$payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testMode);
+$credentials = $payfluid->getSecureCredentials($phone);
+
+$payment = new Payment();
+$payment->amount(1)
+    ->description("Payment for something awesome")
+    ->email($email)
+    ->phone($phone)
+    ->name($name)
+    ->otherInfo("Some additional information here")
+    ->reference(bin2hex(random_bytes(5)))
+    ->redirectUrl("https://your/redirect/url/with/session/appended?session=" . $credentials->session)
+    ->callbackUrl("https://your/callback/url/with/session/appended?session=" . $credentials->session);
+
+// You can later retrieve them when the redirect or callback hits your endpoint.
+$session = $_GET["session"];
+
+// Later 
 ```
 
 <br>
