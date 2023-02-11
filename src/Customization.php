@@ -336,7 +336,7 @@ class Customization
      * @return string
      * @throws Exception
      */
-    public function getEncoded(): string
+    public function getJsonEncoded(): string
     {
         $payload = $this->getRaw();
         $encoding = json_encode($payload);
