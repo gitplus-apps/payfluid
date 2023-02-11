@@ -322,10 +322,10 @@ class Customization
             foreach ($this->customerInputs as $input) {
                 $customerInputs[] = [
                     "label" => $input->getLabel(),
-                    "placeholder" => $input->getPlaceholder(),
-                    "type" => $input->getType(),
-                    "required" => $input->getRequired(),
                     "options" => $input->getOptions(),
+                    "placeholder" => $input->getPlaceholder(),
+                    "required" => $input->getRequired(),
+                    "type" => $input->getType(),
                 ];
             }
 
