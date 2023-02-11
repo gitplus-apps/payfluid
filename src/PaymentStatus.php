@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Gitplus\PayFluid;
 
-class PaymentStatus {
+class PaymentStatus
+{
     public string $amount;
     public string $redirectUrl;
     public string $callbackUrl;
@@ -20,6 +22,4 @@ class PaymentStatus {
     public string $payFluidErrorCode;
     public string $payFluidErrorMsg;
     public string $signature;
-
-    public function __construct() {}
 }
