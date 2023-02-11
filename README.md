@@ -12,7 +12,7 @@
    - [Get Payment Status](#4-check-or-confirm-the-status-of-a-previous-payment)
   
 
-- [👷 Advanced Usage](#-advanced-usage)
+- [💪 Advanced Usage](#-advanced-usage)
   - [Extra Required Fields](#1-extra-required-fields)
   - [Customize Payment Page and Link](#2-customize-payment-page-and-link-behaviour)
   
@@ -174,7 +174,7 @@ try {
 ````
 <br>
 
-## 👷 ADVANCED USAGE
+## 💪 ADVANCED USAGE
 
 ### 1. Extra required fields
 Here are details about some extra required fields. These fields are required
