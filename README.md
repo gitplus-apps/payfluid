@@ -54,8 +54,8 @@ use Gitplus\Payfluid\Payment;
 
 try {
     // Create a new PayFluid client instance. The fourth(4th) parameter is
-    // a boolean that indicates whether you are in live mode or test mode.
-    // true for live mode, false for test mode.
+    // a boolean that indicates whether you are in live or test mode.
+    // True for live mode, False for test mode.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // Get secure credentials to authenticate with the server.

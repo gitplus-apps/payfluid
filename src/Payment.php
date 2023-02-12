@@ -242,7 +242,7 @@ class Payment
     }
 
     /**
-     * Sets the amount to charge your user.
+     * Sets the amount to charge.
      *
      * @param float $amount
      * @return $this
@@ -301,7 +301,7 @@ class Payment
     }
 
     /**
-     * Sets the email of customer as you want to charge.
+     * Sets the email of customer you want to charge.
      * This must be a valid email.
      *
      * @param string $email
@@ -319,7 +319,7 @@ class Payment
     }
 
     /**
-     * Sets the language in which the payment platform would be displayed to your
+     * Sets the language in which the payment platform would be displayed to the
      * customer.
      *
      * Acceptable values include "en", "fr". Defaults to "en".
@@ -332,7 +332,7 @@ class Payment
     {
         $lang = trim($lang);
         if (!in_array($lang,self::VALID_LANG_VALUES)) {
-            throw new Exception(sprintf("payment: invalid value '%s' for language, expected one of (%s)", $lang, join(",", self::VALID_LANG_VALUES)));
+            throw new Exception(sprintf("payment: invalid value for language, expected one of [%s] but got '%s'", join(",", self::VALID_LANG_VALUES), $lang));
         }
         $this->lang = $lang;
         return $this;
@@ -340,7 +340,8 @@ class Payment
 
     /**
      * Sets the mobile number of the customer being charged.
-     * It is preferred in international format. It cannot be less than 10 characters.
+     * It is preferred in international format.
+     * It cannot be less than 10 characters.
      *
      * @param string $phone
      * @return $this
@@ -421,20 +422,20 @@ class Payment
      * used to issue receipt or purchase value to customer. It should be
      * different from your callback url.
      *
-     * @param string $url
+     * @param string $redirectUrl
      * @return $this
      * @throws InvalidPaymentObjectException
      */
-    public function redirectUrl(string $url): self
+    public function redirectUrl(string $redirectUrl): self
     {
-        $url = trim($url);
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        $redirectUrl = trim($redirectUrl);
+        if (!filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
             throw new InvalidPaymentObjectException("payment: invalid redirect url");
         }
-        if (!empty($this->callbackUrl) && strcmp($this->callbackUrl, $url) === 0) {
-            throw new InvalidPaymentObjectException("payment: callback and redirect url cannot be the same");
+        if (!empty($this->callbackUrl) && strcmp($this->callbackUrl, $redirectUrl) === 0) {
+            throw new InvalidPaymentObjectException("payment: redirect and callback url cannot be the same");
         }
-        $this->redirectUrl = $url;
+        $this->redirectUrl = $redirectUrl;
         return $this;
     }
 
@@ -446,25 +447,25 @@ class Payment
      * that were done out of trackable session on client platform.
      * It should be different from your redirect url.
      *
-     * @param string $url
+     * @param string $callbackUrl
      * @return $this
      * @throws Exception
      */
-    public function callbackUrl(string $url): self
+    public function callbackUrl(string $callbackUrl): self
     {
-        $url = trim($url);
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new Exception("payment: invalid redirect url");
+        $callbackUrl = trim($callbackUrl);
+        if (!filter_var($callbackUrl, FILTER_VALIDATE_URL)) {
+            throw new Exception("payment: invalid callback url");
         }
-        if (!empty($this->redirectUrl) && strcmp($this->redirectUrl, $url) === 0) {
+        if (!empty($this->redirectUrl) && strcmp($this->redirectUrl, $callbackUrl) === 0) {
             throw new Exception("payment: callback and redirect url cannot be the same");
         }
-        $this->callbackUrl = $url;
+        $this->callbackUrl = $callbackUrl;
         return $this;
     }
 
     /**
-     * Set the customization you want for this payment.
+     * Add customization to this payment.
      *
      * @param Customization $customization
      * @return $this

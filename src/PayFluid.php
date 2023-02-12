@@ -78,7 +78,13 @@ class PayFluid
         $this->inLiveMode = $inLiveMode;
     }
 
-    private function getEndpoint(string $endpoint)
+    /**
+     * Returns the appropriate endpoint for both live and test mode.
+     *
+     * @param string $endpoint
+     * @return string
+     */
+    private function getEndpoint(string $endpoint): string
     {
         $mode = $this->inLiveMode ? "live" : "test";
         return $this->endpoints[$mode][$endpoint];
@@ -91,7 +97,7 @@ class PayFluid
      * @param DateTime $now
      * @return string
      */
-    private function generateId(DateTime $now): string
+    private function generateApiKeyHeader(DateTime $now): string
     {
         $rsa = new RSA();
         $rsa->loadKey($this->apiKey);
@@ -122,13 +128,13 @@ class PayFluid
         ]);
 
         if ($requestBody === false) {
-            throw new Exception("get secure credentials: encoding the request body to json failed: " . json_last_error_msg());
+            throw new Exception("get secure credentials: encoding request body to json failed: " . json_last_error_msg());
         }
 
         $rsaPublicKey = $sha256Salt = "";
 
         $ch = curl_init($this->getEndpoint("secureZone"));
-        $optionsSet = curl_setopt_array($ch, [
+        $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_RETURNTRANSFER => true,
@@ -136,7 +142,7 @@ class PayFluid
             CURLOPT_HTTPHEADER => [
                 "Content-Type: application/json",
                 "id: " . base64_encode($this->apiId),
-                "apiKey: " . $this->generateId($now),
+                "apiKey: " . $this->generateApiKeyHeader($now),
             ],
 
             // This curl option calls the function for each header in the response.
@@ -156,7 +162,7 @@ class PayFluid
                 return $headerLen;
             }
         ]);
-        if (!$optionsSet) {
+        if (!$optionsOk) {
             throw new Exception("get secure credentials: setting curl options failed: " . curl_error($ch));
         }
 
@@ -182,34 +188,6 @@ class PayFluid
             $response->macExpiry,
             $response->approvalCode
         );
-    }
-
-    /**
-     * Creates a signature for use in requests to the server
-     *
-     * @param SecureCredentials $credentials
-     * @param array $requestBody
-     * @return string A base64 encoded string of the signature
-     * @throws Exception
-     */
-    private function createSignature(SecureCredentials $credentials, array $requestBody): string
-    {
-        $requestBodyAsString = join("", array_values($requestBody));
-
-//        $requestBodyAsString = "";
-//        array_walk_recursive($requestBody, function ($value, $key) use (&$requestBodyAsString) {
-//            $requestBodyAsString .= $value;
-//        });
-
-        $rsa = new RSA();
-        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
-        $keyLoaded = $rsa->loadKey($credentials->rsaPublicKey);
-        if (!$keyLoaded) {
-            throw new Exception("create signature: loading rsa public key failed");
-        }
-
-        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
-        return base64_encode($rsa->encrypt($hash));
     }
 
     /**
@@ -255,6 +233,35 @@ class PayFluid
             throw new InvalidPaymentObjectException("validate payment: redirect url cannot be empty");
         }
     }
+
+    /**
+     * Creates a signature for use in requests to the server
+     *
+     * @param SecureCredentials $credentials
+     * @param array $requestBody
+     * @return string A base64 encoded string of the signature
+     * @throws Exception
+     */
+    private function signRequest(SecureCredentials $credentials, array $requestBody): string
+    {
+        $requestBodyAsString = join("", array_values($requestBody));
+
+        //        $requestBodyAsString = "";
+        //        array_walk_recursive($requestBody, function ($value, $key) use (&$requestBodyAsString) {
+        //            $requestBodyAsString .= $value;
+        //        });
+
+        $rsa = new RSA();
+        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
+        $keyLoaded = $rsa->loadKey($credentials->rsaPublicKey);
+        if (!$keyLoaded) {
+            throw new Exception("create signature: loading rsa public key failed");
+        }
+
+        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
+        return base64_encode($rsa->encrypt($hash));
+    }
+
 
     /**
      * Makes a request to PayFluid to initiate a payment.
@@ -303,7 +310,7 @@ class PayFluid
         }
 
         ksort($requestBody);
-        $signature = $this->createSignature($credentials, $requestBody);
+        $signature = $this->signRequest($credentials, $requestBody);
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);
         if ($requestBody === false) {
@@ -334,7 +341,7 @@ class PayFluid
         if ($result === null) {
             throw new Exception(
                 sprintf(
-                    "get payment link: could not decode json upstream server response '%s': json: %s",
+                    "get payment link: could not decode json, upstream server response '%s': json: %s",
                     $response,
                     json_last_error_msg()
                 )
@@ -342,7 +349,7 @@ class PayFluid
         }
 
         if ($result->result_code !== "00") {
-            throw new Exception(sprintf("get payment link: request failed with code [%d] and message [%s]", $result->result_code, $result->result_message));
+            throw new Exception(sprintf("get payment link: could not get payment link: error code: %d, error message: '%s'", $result->result_code, $result->result_message));
         }
 
         $paymentLink = new PaymentLink();
@@ -363,41 +370,45 @@ class PayFluid
      * transaction from when you call the getPaymentLink() method.
      *
      * @param string $payReference The payReference value. This value is available
-     *                             on the object returned when you call getPaymentLink() method.
+     *                             on the object returned when you call getPaymentLink()
+     *                             method.
+     *
      * @param string $session The session value. This is value available on the
-     *                        object returned when you call getPaymentLink() method.
+     *                        object returned when you call getPaymentLink()
+     *                        method.
+     *
      * @return PaymentStatus
      * @throws Exception
      */
     public function getPaymentStatus(string $payReference, string $session): PaymentStatus
     {
         if ($payReference === "") {
-            throw new InvalidArgumentException("confirm payment status: the payReference argument cannot be empty");
+            throw new InvalidArgumentException("confirm payment status: payReference cannot be empty");
         }
         if ($session === "") {
-            throw new InvalidArgumentException("confirm payment status: the session argument cannot be empty");
+            throw new InvalidArgumentException("confirm payment status: session cannot be empty");
         }
 
         $ch = curl_init($this->getEndpoint("paymentStatus"));
-        $optionsSet = curl_setopt_array($ch, [
+        $optionsOk = curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
                 "payReference: " . $payReference,
             ],
         ]);
 
-        if (!$optionsSet) {
-            throw new Exception("confirm payment status: error setting curl options: " . curl_error($ch));
+        if (!$optionsOk) {
+            throw new Exception("confirm payment status: error preparing request: " . curl_error($ch));
         }
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("confirm payment status: making http request failed: " . curl_error($ch));
+            throw new Exception("confirm payment status: request failed: " . curl_error($ch));
         }
 
         $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
         if ($payload === null) {
-            throw new Exception("confirm payment status: error json decoding response from server: " . json_last_error_msg());
+            throw new Exception("confirm payment status: could not decode server response: `%s`, json error: `%s`" . $response, json_last_error_msg());
         }
 
         return self::verifyPayment($payload, $session);
