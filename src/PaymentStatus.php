@@ -31,7 +31,7 @@ class PaymentStatus
      *
      * @var string
      */
-    public string $clientRef;
+    public string $clientReference;
 
     /**
      * The currency for the payment
@@ -53,7 +53,7 @@ class PaymentStatus
      *
      * @var string
      */
-    public string $upStreamRef;
+    public string $upStreamReference;
 
     /**
      * The debit status code as received from the Payment gateway by PayFluid
@@ -78,7 +78,7 @@ class PaymentStatus
     public string $payReference;
 
     /**
-     * The payment scheme used. E.g MTNMM, MASTERCARD etc.
+     * The payment scheme used. E.g. MTNMM, MASTERCARD etc.
      * @var string
      */
     public string $payScheme;
@@ -88,7 +88,7 @@ class PaymentStatus
      *
      * @var string
      */
-    public string $payFluidTransRef;
+    public string $payFluidReference;
 
     /**
      * The transaction status code.
@@ -126,15 +126,15 @@ class PaymentStatus
             "amount" => $this->amount,
             "redirectUrl" => $this->redirectUrl,
             "callbackUrl" => $this->callbackUrl,
-            "clientRef" => $this->clientRef,
+            "clientReference" => $this->clientReference,
             "currency" => $this->currency,
             "dateTime" => $this->dateTime,
-            "upStreamRef" => $this->upStreamRef,
+            "upStreamReference" => $this->upStreamReference,
             "upStreamDebitStatus" => $this->upStreamDebitStatus,
             "maskedInstrument" => $this->maskedInstrument,
             "payReference" => $this->payReference,
             "payScheme" => $this->payScheme,
-            "payFluidTransRef" => $this->payFluidTransRef,
+            "payFluidReference" => $this->payFluidReference,
             "statusCode" => $this->statusCode,
             "statusString" => $this->statusString,
             "signature" => $this->signature,
