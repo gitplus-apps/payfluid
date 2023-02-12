@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Gitplus\PayFluid;
+namespace Gitplus;
 
 class SecureCredentials
 {
@@ -13,8 +13,14 @@ class SecureCredentials
     public string $approvalCode;
 
 
-    public function __construct(string $session, string $rsaPublicKey, string $sha256Salt, int $kekExpiry, int $macExpiry, string $approvalCode)
-    {
+    public function __construct(
+        string $session,
+        string $rsaPublicKey,
+        string $sha256Salt,
+        int    $kekExpiry,
+        int    $macExpiry,
+        string $approvalCode
+    ) {
         $this->session = $session;
         $this->sha256Salt = $sha256Salt;
         $this->rsaPublicKey = $rsaPublicKey;

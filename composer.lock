@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "49e6bf3762cd775fda9171d9884a53b0d41666c1"
+                "reference": "f7ae6b0bfb2ca268942609fb1f8e88bfbeee4961"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/49e6bf3762cd775fda9171d9884a53b0d41666c1",
-                "reference": "49e6bf3762cd775fda9171d9884a53b0d41666c1",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/f7ae6b0bfb2ca268942609fb1f8e88bfbeee4961",
+                "reference": "f7ae6b0bfb2ca268942609fb1f8e88bfbeee4961",
                 "shasum": ""
             },
             "require": {
@@ -114,7 +114,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-17T13:56:03+00:00"
+            "time": "2023-02-12T04:21:11+00:00"
         }
     ],
     "packages-dev": [],

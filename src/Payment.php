@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Gitplus\PayFluid;
+namespace Gitplus;
 
 use DateTime;
 use Exception;
@@ -174,7 +175,7 @@ class Payment
      *
      *      displayPicture:
      *          Used to override and customise the default display picture setup
-     *          for merchant or clients. This personifies the Payfluid payment
+     *          for merchant or clients. This personifies the PayFluid payment
      *          page and makes payer comfortable to pay the sender of the
      *          payment link. This is useful for cases of remittance
      *          from abroad or to receive payment for goods and
@@ -212,7 +213,7 @@ class Payment
      *                  "type":"select",
      *                  "options": [
      *                      {
-     *                          "k":"firstfruit",
+     *                          "k":"firstFruit",
      *                          "v":"First Fruit"
      *                      },
      *                      {

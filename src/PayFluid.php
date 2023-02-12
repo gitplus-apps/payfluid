@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Gitplus\PayFluid;
+namespace Gitplus;
 
 use DateTime;
 use Exception;
@@ -79,7 +80,7 @@ class PayFluid
     }
 
     /**
-     * Returns the appropriate endpoint for both live and test mode.
+     * Returns the appropriate endpoint for either live or test mode.
      *
      * @param string $endpoint
      * @return string
@@ -89,6 +90,7 @@ class PayFluid
         $mode = $this->inLiveMode ? "live" : "test";
         return $this->endpoints[$mode][$endpoint];
     }
+
 
     /**
      * Generates an id for use as the API key in the header when getting secure
@@ -106,6 +108,7 @@ class PayFluid
         $output = $rsa->encrypt($data);
         return base64_encode($output);
     }
+
 
     /**
      * Makes a request to the secure zone endpoint to get new secure credentials.
@@ -190,6 +193,7 @@ class PayFluid
         );
     }
 
+
     /**
      * Checks to ensure that the payment object is valid
      *
@@ -234,6 +238,7 @@ class PayFluid
         }
     }
 
+
     /**
      * Creates a signature for use in requests to the server
      *
@@ -268,7 +273,7 @@ class PayFluid
      *
      * @param SecureCredentials $credentials
      * @param Payment $payment
-     * @return PaymentLink A PaymentLink object with a url to the payment page
+     * @return PaymentLink A PaymentLink object with the url to the payment page
      * @throws Exception
      */
     public function getPaymentLink(SecureCredentials $credentials, Payment $payment): PaymentLink
@@ -366,55 +371,6 @@ class PayFluid
 
 
     /**
-     * Retrieves and lets you confirm the status of a previously pre-created
-     * transaction from when you call the getPaymentLink() method.
-     *
-     * @param string $payReference The payReference value. This value is available
-     *                             on the object returned when you call getPaymentLink()
-     *                             method.
-     *
-     * @param string $session The session value. This is value available on the
-     *                        object returned when you call getPaymentLink()
-     *                        method.
-     *
-     * @return PaymentStatus
-     * @throws Exception
-     */
-    public function getPaymentStatus(string $payReference, string $session): PaymentStatus
-    {
-        if ($payReference === "") {
-            throw new InvalidArgumentException("confirm payment status: payReference cannot be empty");
-        }
-        if ($session === "") {
-            throw new InvalidArgumentException("confirm payment status: session cannot be empty");
-        }
-
-        $ch = curl_init($this->getEndpoint("paymentStatus"));
-        $optionsOk = curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "payReference: " . $payReference,
-            ],
-        ]);
-
-        if (!$optionsOk) {
-            throw new Exception("confirm payment status: error preparing request: " . curl_error($ch));
-        }
-
-        $response = curl_exec($ch);
-        if ($response === false) {
-            throw new Exception("confirm payment status: request failed: " . curl_error($ch));
-        }
-
-        $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
-        if ($payload === null) {
-            throw new Exception("confirm payment status: could not decode server response: `%s`, json error: `%s`" . $response, json_last_error_msg());
-        }
-
-        return self::verifyPayment($payload, $session);
-    }
-
-    /**
      * Verifies that the data sent from PayFluid to the integrator is indeed
      * coming from PayFluid and has not been tampered with.
      *
@@ -475,5 +431,55 @@ class PayFluid
         $status->statusString = $payload["aapf_txn_sc_msg"];
         $status->signature = $signatureFromRequest;
         return $status;
+    }
+
+
+    /**
+     * Retrieves and lets you confirm the status of a previously pre-created
+     * transaction from when you call the getPaymentLink() method.
+     *
+     * @param string $payReference The payReference value. This value is available
+     *                             on the object returned when you call getPaymentLink()
+     *                             method.
+     *
+     * @param string $session The session value. This is value available on the
+     *                        object returned when you call getPaymentLink()
+     *                        method.
+     *
+     * @return PaymentStatus
+     * @throws Exception
+     */
+    public function getPaymentStatus(string $payReference, string $session): PaymentStatus
+    {
+        if ($payReference === "") {
+            throw new InvalidArgumentException("confirm payment status: payReference cannot be empty");
+        }
+        if ($session === "") {
+            throw new InvalidArgumentException("confirm payment status: session cannot be empty");
+        }
+
+        $ch = curl_init($this->getEndpoint("paymentStatus"));
+        $optionsOk = curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "payReference: " . $payReference,
+            ],
+        ]);
+
+        if (!$optionsOk) {
+            throw new Exception("confirm payment status: error preparing request: " . curl_error($ch));
+        }
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            throw new Exception("confirm payment status: request failed: " . curl_error($ch));
+        }
+
+        $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
+        if ($payload === null) {
+            throw new Exception("confirm payment status: could not decode server response: `%s`, json error: `%s`" . $response, json_last_error_msg());
+        }
+
+        return self::verifyPayment($payload, $session);
     }
 }

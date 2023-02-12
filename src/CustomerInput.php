@@ -1,6 +1,6 @@
 <?php
 
-namespace Gitplus\PayFluid;
+namespace Gitplus;
 
 
 class CustomerInput

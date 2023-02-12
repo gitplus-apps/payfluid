@@ -222,8 +222,8 @@ try {
 ## 💪 ADVANCED USAGE
 
 ### 1. Extra required fields
-Here are details about some extra required fields. These fields are required
-but they have default fields so you can ignore them.
+Here are details about some extra required fields. These fields are required,
+but they have default fields, so you can ignore them.
 ```php
 <?php
 

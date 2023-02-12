@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Gitplus\PayFluid;
+namespace Gitplus;
 
 class PaymentLink
 {
