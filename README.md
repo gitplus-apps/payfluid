@@ -1,8 +1,8 @@
 # A package that wraps eTranzact's [PayFluid payment API](https://documenter.getpostman.com/view/1587357/SWDzdLcg#3b4e3a30-4714-4d21-a53a-1ca938618ede)
 
 ## 📌 Overview
-This package helps you integrate PayFluid's payment system into your application in an easy and simple way.  
-The package covers all the endpoints exposed by PayFluid.
+This package simplifies the process of integrating PayFluid's payment into your application.
+It supports all the endpoints exposed by PayFluid.
 * Generate secure credentials.
 * Generate a payment link to collect payments.
 * Verify payment details sent to your redirect url and callback url.
@@ -63,7 +63,6 @@ require("vendor/autoload.php");
 
 use Gitplus\PayFluid\PayFluid;
 use Gitplus\PayFluid\Payment;
-
 
 try {
     // Create a new PayFluid client instance. The fourth(4th) parameter is
