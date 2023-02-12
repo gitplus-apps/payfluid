@@ -354,7 +354,7 @@ class PayFluid
         }
 
         if ($result->result_code !== "00") {
-            throw new Exception(sprintf("get payment link: could not get payment link: error code: %d, error message: '%s'", $result->result_code, $result->result_message));
+            throw new Exception(sprintf("get payment link: request failed with error code: %d and error message: '%s'", $result->result_code, $result->result_message));
         }
 
         $paymentLink = new PaymentLink();
