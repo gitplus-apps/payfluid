@@ -32,7 +32,7 @@ class CustomerInput
      */
     public function label(string $label): self
     {
-        $this->label = $label;
+        $this->label = trim($label);
         return $this;
     }
 
@@ -44,7 +44,7 @@ class CustomerInput
      */
     public function placeholder(string $placeholder): self
     {
-        $this->placeholder = $placeholder;
+        $this->placeholder = trim($placeholder);
         return $this;
     }
 
@@ -90,8 +90,8 @@ class CustomerInput
             throw new Exception("customer input: set option: key cannot be empty");
         }
         $this->options[] = [
-            "k" => $key,
-            "v" => $value
+            "k" => trim($key),
+            "v" => trim($value),
         ];
         return $this;
     }
