@@ -360,7 +360,7 @@ $session = $_GET["session"];
 <br>
 
 ## 😬️ Issues 
-If you come across any issue or a problem please feel free and kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
+If you come across any issue or a problem kindly feel free and [report it here](https://github.com/gitplus-apps/payfluid/issues)
 
 <br>
 
