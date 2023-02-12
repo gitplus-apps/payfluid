@@ -247,12 +247,12 @@ class Payment
      *
      * @param float $amount
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function amount(float $amount): self
     {
         if (!filter_var($amount, FILTER_VALIDATE_FLOAT)) {
-            throw new InvalidPaymentObjectException(sprintf("validate payment: '%s' amount is not valid float or decimal", $amount));
+            throw new Exception(sprintf("validate payment: '%s' amount is not valid float or decimal", $amount));
         }
         $this->amount = $amount;
         return $this;
@@ -278,13 +278,13 @@ class Payment
      *
      * @param string $description
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function description(string $description): self
     {
         $description = trim($description);
         if (strlen($description) > self::MAX_DESCRIPTION_LEN) {
-            throw new InvalidPaymentObjectException(sprintf("payment: description cannot be more than %d characters long", self::MAX_DESCRIPTION_LEN));
+            throw new Exception(sprintf("payment: description cannot be more than %d characters long", self::MAX_DESCRIPTION_LEN));
         }
 
         $this->description = $description;
@@ -307,13 +307,13 @@ class Payment
      *
      * @param string $email
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function email(string $email): self
     {
         $email = trim($email);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidPaymentObjectException(sprintf("payment: email '%s' is not valid", $email));
+            throw new Exception(sprintf("payment: email '%s' is not valid", $email));
         }
         $this->email = trim($email);
         return $this;
@@ -346,7 +346,7 @@ class Payment
      *
      * @param string $phone
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function phone(string $phone): self
     {
@@ -357,7 +357,7 @@ class Payment
             );
         }
         if (!is_numeric($phone)) {
-            throw new InvalidPaymentObjectException(sprintf("payment: '%s' is not a valid phone number: only digits allowed", $phone));
+            throw new Exception(sprintf("payment: '%s' is not a valid phone number: only digits allowed", $phone));
         }
         $this->phone = trim($phone);
         return $this;
@@ -397,14 +397,14 @@ class Payment
      *
      * @param string $reference
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function reference(string $reference): self
     {
         $reference = trim($reference);
         $refLength = strlen($reference);
         if ($refLength > self::MAX_REFERENCE_LEN) {
-            throw new InvalidPaymentObjectException(
+            throw new Exception(
                 sprintf(
                     "payment: reference cannot be more than %d characters: your reference '%s' is %d characters long", self::MAX_REFERENCE_LEN, $reference, $refLength
                 )
@@ -425,16 +425,16 @@ class Payment
      *
      * @param string $redirectUrl
      * @return $this
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     public function redirectUrl(string $redirectUrl): self
     {
         $redirectUrl = trim($redirectUrl);
         if (!filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
-            throw new InvalidPaymentObjectException("payment: invalid redirect url");
+            throw new Exception("payment: invalid redirect url");
         }
         if (!empty($this->callbackUrl) && strcmp($this->callbackUrl, $redirectUrl) === 0) {
-            throw new InvalidPaymentObjectException("payment: redirect and callback url cannot be the same");
+            throw new Exception("payment: redirect and callback url cannot be the same");
         }
         $this->redirectUrl = $redirectUrl;
         return $this;

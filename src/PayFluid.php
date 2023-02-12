@@ -198,43 +198,43 @@ class PayFluid
      * Checks to ensure that the payment object is valid
      *
      * @param Payment $payment
-     * @throws InvalidPaymentObjectException
+     * @throws Exception
      */
     private function validatePaymentObject(Payment $payment)
     {
         // Validate amount
         if (empty($payment->getAmount())) {
-            throw new InvalidPaymentObjectException("validate payment: amount cannot be empty");
+            throw new Exception("validate payment: amount cannot be empty");
         }
 
         // Validate currency
         if (empty($payment->currency())) {
-            throw new InvalidPaymentObjectException("validate payment: currency cannot be empty");
+            throw new Exception("validate payment: currency cannot be empty");
         }
 
         // Validate date time
         if (empty($payment->getDateTime())) {
-            throw new InvalidPaymentObjectException("validate payment: datetime cannot be empty: you must supply a date time string in the format 'Y-m-d\TH:i:s.v\Z'");
+            throw new Exception("validate payment: datetime cannot be empty: you must supply a date time string in the format 'Y-m-d\TH:i:s.v\Z'");
         }
 
         // Validate email
         if (empty($payment->getEmail())) {
-            throw new InvalidPaymentObjectException("validate payment: email cannot be empty");
+            throw new Exception("validate payment: email cannot be empty");
         }
 
         // Validate phone number
         if (empty($payment->getPhone())) {
-            throw new InvalidPaymentObjectException("validate payment: phone cannot be empty");
+            throw new Exception("validate payment: phone cannot be empty");
         }
 
         // Validate reference
         if (empty($payment->getReference())) {
-            throw new InvalidPaymentObjectException("validate payment: reference cannot be empty");
+            throw new Exception("validate payment: reference cannot be empty");
         }
 
         // Validate redirect and callback urls
         if (empty($payment->getRedirectUrl())) {
-            throw new InvalidPaymentObjectException("validate payment: redirect url cannot be empty");
+            throw new Exception("validate payment: redirect url cannot be empty");
         }
     }
 
@@ -260,7 +260,7 @@ class PayFluid
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
         $keyLoaded = $rsa->loadKey($credentials->rsaPublicKey);
         if (!$keyLoaded) {
-            throw new Exception("create signature: loading rsa public key failed");
+            throw new Exception("sign request: loading rsa public key failed");
         }
 
         $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
@@ -285,7 +285,7 @@ class PayFluid
         try {
             $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
-            throw new InvalidPaymentObjectException("get payment link: invalid payment object: " . $e->getMessage());
+            throw new Exception("get payment link: invalid payment object: " . $e->getMessage());
         }
 
         $requestBody = [
