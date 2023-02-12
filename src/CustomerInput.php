@@ -2,17 +2,28 @@
 
 namespace Gitplus\PayFluid;
 
+use Exception;
 
 class CustomerInput
 {
     public const TYPE_TEXT = "input";
     public const TYPE_SELECT = "select";
+
+    private const VALID_INPUT_TYPES = [
+        self::TYPE_TEXT,
+        self::TYPE_SELECT,
+    ];
+
     private string $label;
     private string $placeholder;
     private string $type;
     private bool $required = false;
     private array $options;
 
+    public function __construct()
+    {
+        $this->type = $this->placeholder = $this->label = "";
+    }
     /**
      * Sets the label for the customer input.
      *
@@ -45,6 +56,9 @@ class CustomerInput
      */
     public function type(string $type): self
     {
+        if (!in_array($type, self::VALID_INPUT_TYPES)) {
+            throw new Exception(sprintf("invalid input type '%s', expected one of", $type, join(",", self::VALID_INPUT_TYPES)));
+        }
         $this->type = $type;
         return $this;
     }

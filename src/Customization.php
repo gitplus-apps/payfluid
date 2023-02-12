@@ -299,9 +299,6 @@ class Customization
         if ($input->getType() === "") {
             throw new Exception("customization: input has not type");
         }
-        if (!in_array($input->getType(), [CustomerInput::TYPE_SELECT, CustomerInput::TYPE_TEXT])) {
-            throw new Exception("customization: unknown input type");
-        }
 
         // You cannot have a select input type without any options
         if (
