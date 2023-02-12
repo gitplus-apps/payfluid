@@ -251,10 +251,10 @@ class PayFluid
     {
         $requestBodyAsString = join("", array_values($requestBody));
 
-        //        $requestBodyAsString = "";
-        //        array_walk_recursive($requestBody, function ($value, $key) use (&$requestBodyAsString) {
-        //            $requestBodyAsString .= $value;
-        //        });
+        // $requestBodyAsString = "";
+        // array_walk_recursive($requestBody, function ($value, $key) use (&$requestBodyAsString) {
+        //     $requestBodyAsString .= $value;
+        // });
 
         $rsa = new RSA();
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);

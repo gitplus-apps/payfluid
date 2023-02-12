@@ -48,8 +48,8 @@ Here a quick start to get you going quickly.
 
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
-use Gitplus\Payfluid\Payment;
+use Gitplus\PayFluid\PayFluid;
+use Gitplus\PayFluid\Payment;
 
 
 try {
@@ -101,7 +101,7 @@ redirect url.
 
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
+use Gitplus\PayFluid\PayFluid;
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     try {
@@ -145,7 +145,7 @@ callback/webhook url.
 ```php
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
+use Gitplus\PayFluid\PayFluid;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
@@ -185,7 +185,7 @@ particular payment.
 
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
+use Gitplus\PayFluid\PayFluid;
 
 try {
     // Create a new PayFluid client instance.
@@ -229,8 +229,8 @@ but they have default fields, so you can ignore them.
 
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
-use Gitplus\Payfluid\Payment;
+use Gitplus\PayFluid\PayFluid;
+use Gitplus\PayFluid\Payment;
 
 
 try {
@@ -288,8 +288,8 @@ Below is an example of how you can achieve that.
 
 require("vendor/autoload.php");
 
-use Gitplus\Payfluid\PayFluid;
-use Gitplus\Payfluid\Payment;
+use Gitplus\PayFluid\PayFluid;
+use Gitplus\PayFluid\Payment;
 use Gitplus\PayFluid\Customization;
 use Gitplus\PayFluid\CustomerInput;
 
