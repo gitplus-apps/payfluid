@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             // You can convert the payment status to a JSON string and perhaps store it for future reference
             $statusAsJson = $paymentStatus->toJson();
             
-            // You can also retrieve it as an array if you want;
+            // You can also retrieve it as an array if you want
             $statusAsArray = $paymentStatus->toArray();
             
             echo "Payment successful";
@@ -164,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // You can convert the payment status to a JSON string and perhaps store it for future reference
             $statusAsJson = $paymentStatus->toJson();
             
-            // You can also retrieve it as an array if you want;
+            // You can also retrieve it as an array if you want
             $statusAsArray = $paymentStatus->toArray();
             
             echo "Payment successful";
@@ -203,7 +203,7 @@ try {
         // You can convert the payment status to a JSON string and perhaps store it for future reference
         $statusAsJson = $paymentStatus->toJson();
         
-        // You can also retrieve it as an array if you want;
+        // You can also retrieve it as an array if you want
         $statusAsArray = $paymentStatus->toArray();
  
         echo "Payment successful";
