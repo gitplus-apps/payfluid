@@ -11,7 +11,7 @@ The package covers all the endpoints exposed by PayFluid.
 <br>
 
 ## 🚜 How it works
-Here is how everything works:
+Here is how the process usually flows:
 1. Create a payment link
 2. Redirect user to the payment page
 3. User completes payment
