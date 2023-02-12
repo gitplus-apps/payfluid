@@ -26,6 +26,7 @@ That's it!!
 ## 📚 Contents
 - [📌 Overview](#-overview)
 - [🚜 How it works](#-how-it-works)
+- [⚠️ Notice](#-notice)
 - [⏳ Installation](#-installation)
 - [👼🏽 Basic Usage](#-basic-usage)
    - [Quick Start - Generate Payment Link](#1-generate-payment-link)
@@ -36,9 +37,13 @@ That's it!!
   - [Customize Payment Page and Link](#1-customize-payment-page-and-link-behaviour)
 - [✌🏽️ Tips and Tricks](#-tips)
   - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
-- [😬️ Issues](#-issues)
+- [😬 Issues](#-issues)
 - [👊🏽 Contributions](#-contributions)
 
+<br>
+
+## ⚠️ Notice
+> #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.
 <br>
 
 ## ⏳ Installation
@@ -50,9 +55,6 @@ composer require gitplus/payfluid
 <br>
 
 ## 👼🏽 Basic Usage
-
-> #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.  
-
 > #### Kindly note that error handling has been intentionally left out of these examples for brevity.
 ### 1. Generate payment link.
 Here a quick start to get you going quickly.
