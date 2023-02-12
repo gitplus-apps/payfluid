@@ -53,11 +53,12 @@ class CustomerInput
      *
      * @param string $type
      * @return $this
+     * @throws Exception
      */
     public function type(string $type): self
     {
         if (!in_array($type, self::VALID_INPUT_TYPES)) {
-            throw new Exception(sprintf("invalid input type '%s', expected one of", $type, join(",", self::VALID_INPUT_TYPES)));
+            throw new Exception(sprintf("customer input: invalid input type '%s', expected one of (%s)", $type, join(",", self::VALID_INPUT_TYPES)));
         }
         $this->type = $type;
         return $this;
@@ -81,9 +82,13 @@ class CustomerInput
      * @param string $key
      * @param string $value
      * @return $this
+     * @throws Exception
      */
     public function setOption(string $key, string $value): self
     {
+        if (empty($key)) {
+            throw new Exception("customer input: set option: key cannot be empty");
+        }
         $this->options[] = [
             "k" => $key,
             "v" => $value
