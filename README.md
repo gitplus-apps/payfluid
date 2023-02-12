@@ -2,11 +2,12 @@
 
 ## 📌 Overview
 This package helps you integrate PayFluid's payment system into your application in an easy and simple way.  
-With this package you can do three main things:
+The package covers all the endpoints exposed by PayFluid.
+* Generate secure credentials.
 * Generate a payment link to collect payments.
 * Verify payment details sent to your redirect url and callback url.
 * Get the status of a previously made payment.
-* In addition, the package makes it easy to customize the payment page and also customize how the payment link behaves.
+* Customize the payment page and also customize how the payment link behaves.
 <br>
 
 ## Contents
