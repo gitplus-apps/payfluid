@@ -261,6 +261,7 @@ class Payment
     /**
      * Sets the currency for the payment.
      *
+     * Accepts an ISO currency code. E.g. GHS.
      * Defaults to 'GHS' so you can decide not to call this method.
      *
      * @param string $currency

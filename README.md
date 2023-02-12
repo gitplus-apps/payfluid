@@ -19,8 +19,7 @@ The package covers all the endpoints exposed by PayFluid.
    - [Verify Payment - (Callback/Webhook URL)](#3-verify-transaction-on-your-callbackwebhook-url)
    - [Get Payment Status](#4-check-or-confirm-the-status-of-a-previous-payment)
 - [💪🏽 Advanced Usage](#-advanced-usage)
-  - [Extra Required Fields](#1-extra-required-fields)
-  - [Customize Payment Page and Link](#2-customize-payment-page-and-link-behaviour)
+  - [Customize Payment Page and Link](#1-customize-payment-page-and-link-behaviour)
 - [✌🏽️ Tips and Tricks](#-tips)
   - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
 - [⚠️ Issues](#-issues)
@@ -66,12 +65,14 @@ try {
     // Create a new payment object and set the required and any optional fields.
     // You can chain the methods.
     $payment = new Payment();
-    $payment->amount(1.0)                               // (Required) The amount to charge
-        ->email($email)                                 // (Required) Customer's email address
-        ->phone($phoneNumber)                           // (Required) Customer's phone number
-        ->name($name)                                   // (Required) Customer's name
+    $payment->amount(1.0)                               // (Required) The amount to charge.
+        ->email($email)                                 // (Required) Customer's email address.
+        ->phone($phoneNumber)                           // (Required) Customer's phone number.
+        ->name($name)                                   // (Required) Customer's name.
         ->reference(bin2hex(random_bytes(5)))           // (Required) A unique alphanumeric string; 10 characters max.
-        ->redirectUrl("https://your/redirect/url")              // (Required) Your user will be redirected here after paying.
+        ->redirectUrl("https://your/redirect/url")      // (Required) Your user will be redirected here after paying.
+        ->currency("GHS")                               // (Required but ignorable) Currency for the payment. Defaults to "GHS".
+        ->language("en")                                // (Required but ignorable) Language for payment page. Defaults to "en". Other values: "fr"
         ->description("Enter description for the payment")      // (Optional) A description for the transaction; 40 characters max.
         ->callbackUrl("https://your/callback_or_webhook/url")   // (Optional) This is your webhook.
         ->otherInfo("Any extra information");                   // (Optional) Any extra information.
@@ -220,64 +221,7 @@ try {
 
 ## 💪🏽 Advanced Usage
 
-### 1. Extra required fields
-Here are details about some extra required fields. These fields are required,
-but they have default fields, so you can ignore them.
-```php
-<?php
-
-require("vendor/autoload.php");
-
-use Gitplus\PayFluid\PayFluid;
-use Gitplus\PayFluid\Payment;
-
-
-try {
-    // Create a new PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
-    
-    // Get secure credentials.
-    // Note that the $credentials object here has your 'session' value.
-    // It is a good idea to store it for later use. You will need it to
-    // verify payments later.
-    $credentials = $payfluid->getSecureCredentials($phoneNumber);
-    
-    // Create a new payment object.
-    $payment = new Payment();
-    
-    // These fields are absolutely required.
-    $payment->amount(1.0)
-        ->email($email)
-        ->phone($phoneNumber)
-        ->name($name)
-        ->reference(bin2hex(random_bytes(5)))
-        ->redirectUrl("https://your/redirect/url");
-  
-    // These fields are also required, but they have default values, so you can ignore them.
-    // The default values will be used if you don't set them.
-    // If you do NEED to change them, you can do so.
-    // Here they with their default values:
-    $payment->currency("GHS")->lang("en");
-    
-    // Optional fields
-    $payment->description("Enter description for the payment")
-        ->callbackUrl("https://your/callback_or_webhook/url")
-        ->otherInfo("Any extra information");
-    
-    // Get payment link
-    $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
-    
-    // You can then retrieve the payment url and redirect your user to that location.
-    // This $paymentLink object will have your 'session' and 'payReference' values.
-    // It is a good idea to save these values for later. You will need them to
-    // verify payments or retrieve the status of a particular payment.
-    $paymentLink->webUrl;
-} catch (\Throwable $e) {
-    // Handle error
-    echo "Generating payment url failed: " . $e->getMessage();
-}
-```
-### 2. Customize payment page and link behaviour.
+### 1. Customize payment page and link behaviour.
 PayFluid gives you some flexibility. You can customize how the web url you get behaves
 and also customize how the payment page that will be presented to your user will look like.
 Below is an example of how you can achieve that.
