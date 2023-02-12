@@ -1,13 +1,16 @@
-# A simple package that wraps [PayFluid's payment API](https://documenter.getpostman.com/view/1587357/SWDzdLcg#3b4e3a30-4714-4d21-a53a-1ca938618ede)
+# A package that wraps eTranzact's [PayFluid payment API](https://documenter.getpostman.com/view/1587357/SWDzdLcg#3b4e3a30-4714-4d21-a53a-1ca938618ede)
+
+## 📌 Overview
 This package helps you integrate PayFluid's payment system into your application in an easy and simple way.  
-With this package you can do three main things: 
+With this package you can do three main things:
 * Generate a payment link to collect payments.
 * Verify payment details sent to your redirect url and callback url.
 * Get the status of a previously made payment.
 * In addition, the package makes it easy to customize the payment page and also customize how the payment link behaves.
+<br>
 
 ## Contents
-
+- [📌 Overview](#-overview)
 - [⏳ Installation](#-installation)
 
 - [👼 Basic Usage](#-basic-usage)
@@ -28,7 +31,7 @@ With this package you can do three main things:
 
 <br>
 
-## ⏳ INSTALLATION
+## ⏳ Installation
 
 You will need composer to install this package. You can [get it here](https://getcomposer.org/)
 ```bash
@@ -36,7 +39,7 @@ composer require gitplus/payfluid
 ```
 <br>
 
-## 👼 BASIC USAGE
+## 👼 Basic Usage
 
 > #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.  
 
@@ -143,6 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 Here is how you can verify a payment when the details get sent to your
 callback/webhook url.
 ```php
+<?php
+
 require("vendor/autoload.php");
 
 use Gitplus\PayFluid\PayFluid;
@@ -217,7 +222,7 @@ try {
 ````
 <br>
 
-## 💪 ADVANCED USAGE
+## 💪 Advanced Usage
 
 ### 1. Extra required fields
 Here are details about some extra required fields. These fields are required,
@@ -368,13 +373,18 @@ try {
 
 <br>
 
-## ✌️️ TIPS
+## ✌️️ Tips
 
 ### 1. Pass and retrieve session value from redirect or callback url.
 If you are finding it difficult to store your session value you can pass it via your redirect or callback url.  
 
 ```php
 <?php
+
+require("vendor/autoload.php");
+
+use Gitplus\PayFluid\PayFluid;
+
 $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
 $credentials = $payfluid->getSecureCredentials($phone);
 
@@ -395,10 +405,10 @@ $session = $_GET["session"];
 
 <br>
 
-## ⚠️ ISSUES
+## ⚠️ Issues
 If you come across any issue or a problem you can kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
 
 <br>
 
-## 👊 CONTRIBUTIONS
+## 👊 Contributions
 Contributions and improvements are welcome
