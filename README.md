@@ -10,8 +10,20 @@ The package covers all the endpoints exposed by PayFluid.
 * Customize the payment page and also customize how the payment link behaves.
 <br>
 
-## Contents
+## 🚜 How it works
+Here is how everything works:
+1. Create a payment link
+2. Redirect user to the payment page
+3. User completes payment
+4. User gets redirected to your redirect url with the status of the payment 
+5. Verify payment status
+6. Offer value to your user if the payment is successful  
+
+That's it!!
+
+## 📚 Contents
 - [📌 Overview](#-overview)
+- [🚜 How it works](#-how-it-works)
 - [⏳ Installation](#-installation)
 - [👼🏽 Basic Usage](#-basic-usage)
    - [Quick Start - Generate Payment Link](#1-generate-payment-link)
