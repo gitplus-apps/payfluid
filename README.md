@@ -316,24 +316,21 @@ try {
     $textInput = new CustomerInput();
     $textInput->label("Church Membership ID")    // The label for the input
         ->placeholder("Membership ID #")         // The placeholder for the input
-        ->inputType(CustomerInput::TYPE_TEXT)    // The type of input
+        ->type(CustomerInput::TYPE_TEXT)    // The type of input
         ->required(true);                        // Indicate whether the input is required or not.
         
-    
     // Create another input but this time it will be a select dropdown.
     $selectInput = new CustomerInput();
     $selectInput->label("Offering Type")          // Label for the input field
         ->placeholder("Offering Type 2")          // Placeholder value for the field
-        ->inputType(CustomerInput::TYPE_SELECT)   // Set the input as a select dropdown
+        ->type(CustomerInput::TYPE_SELECT)   // Set the input as a select dropdown
         ->setOption("key", "value")               // Set the options that will be in the dropdown               
         ->setOption("key2", "value2");            // You can set more options for the dropdown
-      
       
     // Add your inputs to your customization object
     $customization
         ->withCustomerInput($textInput)
         ->withCustomerInput($selectInput);
-     
      
     // Now create a payment object and customize it with the customization.
     $payment = new Payment();
@@ -348,7 +345,6 @@ try {
         ->otherInfo("Any extra information")
         ->customize($customization);    // Add the customization you created
     
-     
     // Create the PayFluid client instance.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     

@@ -43,7 +43,7 @@ class CustomerInput
      * @param string $type
      * @return $this
      */
-    public function inputType(string $type): self
+    public function type(string $type): self
     {
         $this->type = $type;
         return $this;

@@ -280,11 +280,11 @@ class Customization
      *
      * Up to 3 different information can be requested.
      *
-     * @param CustomerInput $customerInput
+     * @param CustomerInput $input
      * @return $this
      * @throws Exception
      */
-    public function withCustomerInput(CustomerInput $customerInput): self
+    public function withCustomerInput(CustomerInput $input): self
     {
         if (
             isset($this->customerInputs) &&
@@ -293,7 +293,25 @@ class Customization
             throw new Exception(sprintf("customization: maximum number of '%d' extra customer inputs reached", self::MAX_CUSTOMER_INPUTS));
         }
 
-        $this->customerInputs[] = $customerInput;
+        if ($input->getLabel() === "") {
+            throw new Exception("customization input has no label");
+        }
+        if ($input->getType() === "") {
+            throw new Exception("customization: input has not type");
+        }
+        if (!in_array($input->getType(), [CustomerInput::TYPE_SELECT, CustomerInput::TYPE_TEXT])) {
+            throw new Exception("customization: unknown input type");
+        }
+
+        // You cannot have a select input type without any options
+        if (
+            $input->getType() === CustomerInput::TYPE_SELECT &&
+            count($input->getOptions()) === 0
+        ) {
+            throw new Exception(sprintf("customization: input with type '%s' must have at least one option set", CustomerInput::TYPE_SELECT));
+        }
+
+        $this->customerInputs[] = $input;
         return $this;
     }
 
@@ -322,15 +340,6 @@ class Customization
             $customerInputs = [];
 
             foreach ($this->customerInputs as $input) {
-
-                // You cannot have a select input type without any options
-                if (
-                    $input->getType() === CustomerInput::TYPE_SELECT &&
-                    count($input->getOptions()) === 0
-                ) {
-                    throw new Exception(sprintf("customization: CustomerInput with type '%s' must have at least one option set", CustomerInput::TYPE_SELECT));
-                }
-
                 $customerInputs[] = [
                     "label" => $input->getLabel(),
                     "options" => $input->getOptions(),
