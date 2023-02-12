@@ -17,7 +17,7 @@ class ComposerStaticInit5accfcbe58e04a39f992f12e11a34e42
         ),
         'G' => 
         array (
-            'Gitplus\\' => 8,
+            'Gitplus\\PayFluid\\' => 17,
         ),
     );
 
@@ -26,7 +26,7 @@ class ComposerStaticInit5accfcbe58e04a39f992f12e11a34e42
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
-        'Gitplus\\' => 
+        'Gitplus\\PayFluid\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
