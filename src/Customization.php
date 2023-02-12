@@ -294,10 +294,10 @@ class Customization
         }
 
         if ($input->getLabel() === "") {
-            throw new Exception("customization input has no label");
+            throw new Exception("customization input has no label, make sure to give the input a label");
         }
         if ($input->getType() === "") {
-            throw new Exception("customization: input has not type");
+            throw new Exception("customization: input has not type, make sure to set the type of the input");
         }
 
         // You cannot have a select input type without any options
