@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gitplus;
+namespace Gitplus\PayFluid;
 
 use DateTime;
 use Exception;
