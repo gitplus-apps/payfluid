@@ -60,22 +60,21 @@ try {
     
     // Get secure credentials to authenticate with the server.
     // The returned $credentials object here has your 'session' value.
-    // It is a good idea to store it for later use. You will need it to
-    // verify payments.
+    // It is a good idea to store it for later. You will need it to verify payments.
     $credentials = $payfluid->getSecureCredentials($phoneNumber);
     
     // Create a new payment object and set the required and any optional fields.
     // You can chain the methods.
     $payment = new Payment();
-    $payment->amount(1.0)
-        ->email($email)
-        ->phone($phoneNumber)
-        ->name($name)
-        ->reference(bin2hex(random_bytes(5)))                   // A unique alphanumeric string. Maximum of 10 characters.
-        ->description("Enter description for the payment")      // A description for the transaction/payment. Maximum of 40 characters.
-        ->redirectUrl("https://your/redirect/url")              // Your user will be redirected here after paying.
-        ->callbackUrl("https://your/callback_or_webhook/url")   // This is your webhook. Details of the payment will be sent here
-        ->otherInfo("Any extra information");                   // Any extra information.
+    $payment->amount(1.0)                               // (Required) The amount to charge
+        ->email($email)                                 // (Required) Customer's email address
+        ->phone($phoneNumber)                           // (Required) Customer's phone number
+        ->name($name)                                   // (Required) Customer's name
+        ->reference(bin2hex(random_bytes(5)))           // (Required) A unique alphanumeric string; 10 characters max.
+        ->redirectUrl("https://your/redirect/url")              // (Required) Your user will be redirected here after paying.
+        ->description("Enter description for the payment")      // (Optional) A description for the transaction; 40 characters max.
+        ->callbackUrl("https://your/callback_or_webhook/url")   // (Optional) This is your webhook.
+        ->otherInfo("Any extra information");                   // (Optional) Any extra information.
     
     // You can now get a payment link object.
     // Use both the payment object and secure credentials to get a payment link.
