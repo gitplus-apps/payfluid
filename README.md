@@ -55,7 +55,7 @@ use Gitplus\PayFluid\Payment;
 try {
     // Create a new PayFluid client instance. The fourth(4th) parameter is
     // a boolean that indicates whether you are in live or test mode.
-    // True for live mode, False for test mode.
+    // 'TRUE' for live mode, 'FALSE' for test mode.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
     // Get secure credentials to authenticate with the server.
@@ -64,7 +64,7 @@ try {
     // verify payments.
     $credentials = $payfluid->getSecureCredentials($phoneNumber);
     
-    // Instantiate a new payment object and set the required and any optional fields.
+    // Create a new payment object and set the required and any optional fields.
     // You can chain the methods.
     $payment = new Payment();
     $payment->amount(1.0)
@@ -77,6 +77,7 @@ try {
         ->callbackUrl("https://your/callback_or_webhook/url")   // This is your webhook. Details of the payment will be sent here
         ->otherInfo("Any extra information");                   // Any extra information.
     
+    // You can now get a payment link object.
     // Use both the payment object and secure credentials to get a payment link.
     $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
     
@@ -85,7 +86,7 @@ try {
     // NOTE:
     // The $paymentLink object will also have your 'session' and 'payReference' values.
     // It is a good idea to store these values for later. You will need them to
-    // verify payments or to retrieve the status of a particular payment later
+    // verify payments or to retrieve the status of a particular payment later.
     $paymentLink->webUrl;
 } catch (\Throwable $e) {
     // Handle error
@@ -105,19 +106,18 @@ use Gitplus\PayFluid\PayFluid;
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     try {
-        // The request from PayFluid to your redirect URL will come with a 'qs' query
-        // parameter. Use the 'qs' parameter and your session value to verify the
-        // payment.
-        //
+        // The request from PayFluid to your redirect URL will come with a 'qs' query parameter.
+        // Don't worry about calling urldecode() on the 'qs' query parameter. It is handled internally.
+        $qs = $_GET["qs"];
+       
+        // Use qs and your session value to verify the payment.
         // You can get your session value from two(2) places:
         //      1. From the $credentials object you got when you called the getSecureCredentials() method.
         //      2. From the $paymentLink object you got when you called the getPaymentLink() method
-        //      It is a good idea to have stored the session value somewhere earlier.
+        //      It is a good idea to have stored these values somewhere earlier.
         //
-        // Throws an exception if anything goes wrong.
-        // Don't worry about calling urldecode() on the 'qs' query parameter. It is handled internally.
         // The $paymentStatus object returned will have details on whether the transaction was successful or not.
-        $paymentStatus = PayFluid::verifyPayment($_GET["qs"], $session);
+        $paymentStatus = PayFluid::verifyPayment($qs, $session);
         
         // If statusCode = '0' then the payment was successful. Any other value
         // means the transaction failed. The statusString field will explain what
@@ -191,9 +191,7 @@ try {
     // Create a new PayFluid client instance.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
-    // This will return a PaymentStatus object with details information on the status of the payment.
-    //
-    // NOTE:
+    // getPaymentStatus() will return a PaymentStatus object with details information on the status of the payment.
     // The $payReference is from the $paymentLink object you created earlier.
     // The $session is from either the $paymentLink or $credentials objects you created earlier.
     $paymentStatus = $payfluid->getPaymentStatus($payReference, $session);
@@ -237,13 +235,13 @@ try {
     // Create a new PayFluid client instance.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
-    // Get secure credentials for subsequent requests to the API.
-    // The returned $credentials object here has your 'session' value.
+    // Get secure credentials.
+    // Note that the $credentials object here has your 'session' value.
     // It is a good idea to store it for later use. You will need it to
     // verify payments later.
     $credentials = $payfluid->getSecureCredentials($phoneNumber);
     
-    // Instantiate a new payment object and set the required and any optional fields.
+    // Create a new payment object.
     $payment = new Payment();
     
     // These fields are absolutely required.
@@ -265,11 +263,11 @@ try {
         ->callbackUrl("https://your/callback_or_webhook/url")
         ->otherInfo("Any extra information");
     
-    // Use both the payment object and secure credentials to get a payment link.
+    // Get payment link
     $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
     
     // You can then retrieve the payment url and redirect your user to that location.
-    // This $paymentLink object will have your 'session' and 'payReference' value.
+    // This $paymentLink object will have your 'session' and 'payReference' values.
     // It is a good idea to save these values for later. You will need them to
     // verify payments or retrieve the status of a particular payment.
     $paymentLink->webUrl;
@@ -293,7 +291,6 @@ use Gitplus\PayFluid\Payment;
 use Gitplus\PayFluid\Customization;
 use Gitplus\PayFluid\CustomerInput;
 
-
 try {    
     // Create a new customization object.
     $customization = new Customization();
@@ -308,14 +305,14 @@ try {
         ->canPayMultipleTimes(true)                        // Payment links are one time. This will make the link reusable
         ->displayPicture("https://link/to/publicly/accessible/image");  // Set your own image to be displayed on the payment page.
         
-  
     // You can take your customization further.
-    // PayFluid gives you the flexibility to even ask for more information on the payment page.
-    // You do this by creating input fields. The fields will be rendered
-    // on the payment page for the customer to provide answers to. To achieve this
-    // you need to create CustomerInput objects and add them to your customization object.
+    // PayFluid gives you the flexibility to even ask for more information on the
+    // payment page. You do this by creating input fields. The fields will be
+    // rendered on the payment page for the customer to provide answers to.
+    // To achieve this you need to create CustomerInput objects and add
+    // them to your customization object.
     
-    // Let's create our first input. This will be a text input.
+    // Create your first input. This will be a text input.
     $textInput = new CustomerInput();
     $textInput->label("Church Membership ID")    // The label for the input
         ->placeholder("Membership ID #")         // The placeholder for the input
@@ -323,7 +320,7 @@ try {
         ->required(true);                        // Indicate whether the input is required or not.
         
     
-    // Let's create another input. This will be a select dropdown.
+    // Create another input but this time it will be a select dropdown.
     $selectInput = new CustomerInput();
     $selectInput->label("Offering Type")          // Label for the input field
         ->placeholder("Offering Type 2")          // Placeholder value for the field
@@ -338,8 +335,7 @@ try {
         ->withCustomerInput($selectInput);
      
      
-    // Now let's create our payment object and add our customization.
-    // Instantiate a new payment object
+    // Now create a payment object and customize it with the customization.
     $payment = new Payment();
     $payment->amount(1.0)
         ->email($email)
@@ -350,19 +346,20 @@ try {
         ->redirectUrl("https://your/redirect/url")
         ->callbackUrl("https://your/callback_or_webhook/url")
         ->otherInfo("Any extra information")
-        ->withCustomization($customization);    // Add the customization you created
+        ->customize($customization);    // Add the customization you created
     
      
     // Create the PayFluid client instance.
     $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
     
-    // Let's generate credentials.
+    // Generate credentials.
     // Remember the returned $credentials object here has your session value.
     // It is a good idea to store this value because you will need it to verify payments later.
     $credentials = $payfluid->getSecureCredentials($phoneNumber);
     
-    // Get payment link. Again the $paymentLink also has both your 'session'
-    // and 'payReference' values. You will need them later for verification.
+    // Get payment link.
+    // Again the $paymentLink also has both your 'session' and 'payReference' values.
+    // You will need them later for verification.
     $paymentLink = $payfluid->getPaymentLink($credentials, $payment);
     
     // Redirect the user to your customized payment page.

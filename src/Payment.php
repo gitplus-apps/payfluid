@@ -466,12 +466,12 @@ class Payment
     }
 
     /**
-     * Add customization to this payment.
+     * Customize the payment with your preferred customization.
      *
      * @param Customization $customization
      * @return $this
      */
-    public function withCustomization(Customization $customization): self
+    public function customize(Customization $customization): self
     {
         $this->pageCustomization = $customization;
         return $this;
