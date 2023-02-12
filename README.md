@@ -123,13 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
         // means the transaction failed. The statusString field will explain what
         // the code means.
         if ($paymentStatus->statusCode === "0") {
-            echo "Payment successful";
-            
             // You can convert the payment status to a JSON string and perhaps store it for future reference
             $statusAsJson = $paymentStatus->toJson();
             
             // You can also retrieve it as an array if you want;
             $statusAsArray = $paymentStatus->toArray();
+            
+            echo "Payment successful";
         } else {
             echo "Payment failed: " . $paymentStatus->statusString;
         }
@@ -161,13 +161,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // means the transaction failed. The statusString field will explain what
         // the code means.
         if ($paymentStatus->statusCode === "0") {
-            echo "Payment successful";
-            
             // You can convert the payment status to a JSON string and perhaps store it for future reference
             $statusAsJson = $paymentStatus->toJson();
             
             // You can also retrieve it as an array if you want;
             $statusAsArray = $paymentStatus->toArray();
+            
+            echo "Payment successful";
         } else {
             echo "Payment failed: " . $paymentStatus->statusString;
         }
@@ -200,13 +200,13 @@ try {
     // means the transaction failed. The statusString field will explain what
     // the code means.
     if ($paymentStatus->statusCode === "0") {
-        echo "Payment successful";
-            
         // You can convert the payment status to a JSON string and perhaps store it for future reference
         $statusAsJson = $paymentStatus->toJson();
         
         // You can also retrieve it as an array if you want;
         $statusAsArray = $paymentStatus->toArray();
+ 
+        echo "Payment successful";
     } else {
         echo "Payment failed: " . $paymentStatus->statusString;
     }
