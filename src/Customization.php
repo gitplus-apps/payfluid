@@ -134,6 +134,9 @@ class Customization
      */
     public function minimumAmount(float $minAmount): self
     {
+        if ($minAmount === 0.0) {
+            throw new Exception("customization: minimum amount cannot be zero");
+        }
         $this->minAmount = $minAmount;
         return $this;
     }
@@ -146,6 +149,9 @@ class Customization
      */
     public function maximumAmount(float $maxAmount): self
     {
+        if ($maxAmount === 0.0) {
+            throw new Exception("customization: maximum amount cannot be zero");
+        }
         $this->maxAmount = $maxAmount;
         return $this;
     }
@@ -190,11 +196,11 @@ class Customization
         $phone = trim($phone);
         if (strlen($phone) < 10) {
             throw new Exception(
-                sprintf("customization: phone number cannot be less than 10 digits; the supplied phone number is %d digits long", strlen($phone))
+                sprintf("customization: receipt feedback phone cannot be less than 10 digits; the supplied phone number is %d digits long", strlen($phone))
             );
         }
         if (!is_numeric($phone)) {
-            throw new Exception(sprintf("customization: '%s' is not a valid phone number: only digits allowed", $phone));
+            throw new Exception(sprintf("customization: receipt feedback phone '%s' is not a valid phone number: only digits allowed", $phone));
         }
         $this->receiptFeedbackPhone = $phone;
         return $this;
@@ -212,7 +218,7 @@ class Customization
     {
         $email = trim($email);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception(sprintf("customization: email '%s' is not valid", $email));
+            throw new Exception(sprintf("customization: receipt feedback email '%s' is not valid", $email));
         }
         $this->receiptFeedbackEmail = $email;
         return $this;
@@ -250,7 +256,7 @@ class Customization
     {
         $imageUrl = trim($imageUrl);
         if (!filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-            throw new Exception("customization: invalid redirect url");
+            throw new Exception(sprintf("customization: invalid url '%s' supplied for display picture", $imageUrl));
         }
         $this->displayPicture = $imageUrl;
         return $this;
@@ -294,7 +300,7 @@ class Customization
         }
 
         if ($input->getLabel() === "") {
-            throw new Exception("customization input has no label, make sure to give the input a label");
+            throw new Exception("customization: input has no label, make sure to give the input a label");
         }
         if ($input->getType() === "") {
             throw new Exception("customization: input has not type, make sure to set the type of the input");
