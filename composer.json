@@ -6,7 +6,8 @@
   "keywords": [
     "payment",
     "payfluid",
-    "etranzact"
+    "etranzact",
+    "sdk"
   ],
   "readme": "README.md",
   "homepage": "https://github.com/gitplus-apps/payfluid",
@@ -18,9 +19,14 @@
   "authors": [
     {
       "name": "Nana Osei Yeboah",
-      "email": "yeboahnanaosei@gmail.com"
+      "email": "yeboahnanaosei@gmail.com",
+      "homepage": "https://twitter.com/yeboahnanaosei",
+      "role": "Developer"
     }
   ],
+  "support": {
+    "issues": "https://github.com/gitplus-apps/payfluid/issues"
+  },
   "require": {
     "php": ">=7.4",
     "phpseclib/phpseclib": "~2.0",
