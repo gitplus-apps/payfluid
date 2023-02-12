@@ -26,7 +26,7 @@ That's it!!
 ## 📚 Contents
 - [📌 Overview](#-overview)
 - [🚜 How it works](#-how-it-works)
-- [️☝🏽 Notice](#-notice)
+- [️❗️Notice](#-notice)
 - [⏳ Installation](#-installation)
 - [👼🏽 Basic Usage](#-basic-usage)
    - [Quick Start - Generate Payment Link](#1-generate-payment-link)
@@ -41,7 +41,7 @@ That's it!!
 - [👊🏽 Contributions](#-contributions)
 <br>
 
-## ☝🏽Notice
+## ❗️ Notice
 > #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.
 
 <br>
