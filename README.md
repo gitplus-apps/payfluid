@@ -14,21 +14,21 @@ The package covers all the endpoints exposed by PayFluid.
 - [📌 Overview](#-overview)
 - [⏳ Installation](#-installation)
 
-- [👼 Basic Usage](#-basic-usage)
+- [👼🏽 Basic Usage](#-basic-usage)
    - [Quick Start - Generate Payment Link](#1-generate-payment-link)
    - [Verify Payment - (Redirect URL)](#2-verify-transaction-on-your-redirect-url)
    - [Verify Payment - (Callback/Webhook URL)](#3-verify-transaction-on-your-callbackwebhook-url)
    - [Get Payment Status](#4-check-or-confirm-the-status-of-a-previous-payment)
 
-- [💪 Advanced Usage](#-advanced-usage)
+- [💪🏽 Advanced Usage](#-advanced-usage)
   - [Extra Required Fields](#1-extra-required-fields)
   - [Customize Payment Page and Link](#2-customize-payment-page-and-link-behaviour)
 
-- [✌️ Tips and Tricks](#-tips)
+- [✌🏽️ Tips and Tricks](#-tips)
   - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
 
 - [⚠️ Issues](#-issues)
--  [👊 Contributions](#-contributions)
+- [👊🏽 Contributions](#-contributions)
 
 <br>
 
@@ -40,7 +40,7 @@ composer require gitplus/payfluid
 ```
 <br>
 
-## 👼 Basic Usage
+## 👼🏽 Basic Usage
 
 > #### NB: Please note that the IP address of your host device (where you are making requests from) must be whitelisted by PayFluid for any of these to work.  
 
@@ -223,7 +223,7 @@ try {
 ````
 <br>
 
-## 💪 Advanced Usage
+## 💪🏽 Advanced Usage
 
 ### 1. Extra required fields
 Here are details about some extra required fields. These fields are required,
@@ -374,7 +374,7 @@ try {
 
 <br>
 
-## ✌️️ Tips
+## ✌🏽️ Tips
 
 ### 1. Pass and retrieve session value from redirect or callback url.
 If you are finding it difficult to store your session value you can pass it via your redirect or callback url.  
@@ -411,5 +411,5 @@ If you come across any issue or a problem you can kindly [report it here](https:
 
 <br>
 
-## 👊 Contributions
+## 👊🏽 Contributions
 Contributions and improvements are welcome
