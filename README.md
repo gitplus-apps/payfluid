@@ -36,7 +36,7 @@ That's it!!
   - [Customize Payment Page and Link](#1-customize-payment-page-and-link-behaviour)
 - [✌🏽️ Tips and Tricks](#-tips)
   - [Pass and retrieve session values from urls](#1-pass-and-retrieve-session-value-from-redirect-or-callback-url)
-- [⚠️ Issues](#-issues)
+- [😬️ Issues](#-issues)
 - [👊🏽 Contributions](#-contributions)
 
 <br>
@@ -359,8 +359,8 @@ $session = $_GET["session"];
 
 <br>
 
-## ⚠️ Issues
-If you come across any issue or a problem you can kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
+## 😬️ Issues 
+If you come across any issue or a problem please feel free and kindly [report it here](https://github.com/gitplus-apps/payfluid/issues)
 
 <br>
 
