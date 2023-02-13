@@ -295,7 +295,7 @@ class PayFluid
         try {
             $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
-            throw new Exception("get payment link: invalid payment object: " . $e->getMessage());
+            throw new Exception("get payment link: " . $e->getMessage());
         }
 
         $requestBody = [
