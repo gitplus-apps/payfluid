@@ -237,6 +237,7 @@ try {
 ## 💪🏽 Advanced Usage
 
 ### 1. Customize payment page and link behaviour.
+### ⚠️ ⚠️ EXPERIMENTAL (WILL PROBABLY NOT WORK). YOU HAVE BEEN WARNED ⚠️ ⚠️
 PayFluid gives you some flexibility. You can customize how the web url you get behaves
 and also customize how the payment page that will be presented to your user will look like.
 Below is an example of how you can achieve that.
