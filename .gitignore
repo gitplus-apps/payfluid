@@ -2,3 +2,4 @@
 .vscode/
 .fleet/
 .DS_Store
+composer.lock
