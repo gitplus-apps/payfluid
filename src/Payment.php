@@ -7,7 +7,12 @@ namespace Gitplus\PayFluid;
 use DateTime;
 use Exception;
 
-
+/**
+ * Payment is a new payment request to be made to PayFluid.
+ *
+ * It describes the details of the payment/transaction a customer
+ * is about to pay for.
+ */
 class Payment
 {
     /**
@@ -76,7 +81,7 @@ class Payment
      *
      * @var string
      */
-    private string $lang;
+    private string $language;
 
     /**
      * The mobile number of customer as maintained on client platform.
@@ -231,12 +236,12 @@ class Payment
      *    }
      * @var Customization
      */
-    private Customization $pageCustomization;
+    private Customization $customization;
 
     public function __construct()
     {
         $this->currency = "GHS";
-        $this->lang = "en";
+        $this->language = "en";
 
         $now = new DateTime();
         $this->dateTime = $now->format('Y-m-d\TH:i:s.v\Z');
@@ -299,7 +304,7 @@ class Payment
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? "";
     }
 
     /**
@@ -336,7 +341,7 @@ class Payment
         if (!in_array($lang,self::VALID_LANG_VALUES)) {
             throw new Exception(sprintf("payment: invalid value for language, expected one of [%s] but got '%s'", join(",", self::VALID_LANG_VALUES), $lang));
         }
-        $this->lang = $lang;
+        $this->language = $lang;
         return $this;
     }
 
@@ -474,7 +479,7 @@ class Payment
      */
     public function customize(Customization $customization): self
     {
-        $this->pageCustomization = $customization;
+        $this->customization = $customization;
         return $this;
     }
 
@@ -523,12 +528,9 @@ class Payment
      *
      * @return Customization|null
      */
-    public function customization(): ?Customization
+    public function getCustomization(): ?Customization
     {
-        if (!$this->hasCustomization()) {
-            return null;
-        }
-        return $this->pageCustomization;
+        return $this->customization ?? null;
     }
 
     /**
@@ -538,7 +540,7 @@ class Payment
      */
     public function hasCustomization(): bool
     {
-        return isset($this->pageCustomization);
+        return isset($this->customization);
     }
 
     /**
@@ -556,9 +558,9 @@ class Payment
      *
      * @return string
      */
-    public function getLang(): string
+    public function getLanguage(): string
     {
-        return $this->lang ?? "";
+        return $this->language ?? "";
     }
 
     /**

@@ -35,13 +35,6 @@ class PayFluid
     private const TEST_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
     private const LIVE_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
 
-    /**
-     * Specifies the maximum number of characters in a payment description
-     *
-     * @var string
-     */
-    private const MAX_DESCRIPTION_LEN = 40;
-
 
     /**
      * The various endpoints provided by the API
@@ -98,6 +91,7 @@ class PayFluid
      *
      * @param DateTime $now
      * @return string
+     * @throws Exception
      */
     private function generateApiKeyHeader(DateTime $now): string
     {
@@ -142,7 +136,7 @@ class PayFluid
 
         try {
             $apiKeyHeader = $this->generateApiKeyHeader($now);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new Exception("get secure credentials: " . $e->getMessage());
         }
 
@@ -215,6 +209,11 @@ class PayFluid
         // Validate amount
         if (empty($payment->getAmount())) {
             throw new Exception("validate payment: amount cannot be empty or zero");
+        }
+
+        // Validate name
+        if (empty($payment->getName())) {
+            throw new Exception("validate payment: name cannot be empty");
         }
 
         // Validate currency
@@ -295,7 +294,7 @@ class PayFluid
         try {
             $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
-            throw new Exception("get payment link: invalid payment object: " . $e->getMessage());
+            throw new Exception("get payment link: " . $e->getMessage());
         }
 
         $requestBody = [
@@ -303,7 +302,7 @@ class PayFluid
             'currency' => $payment->getCurrency(),
             'datetime' => $payment->getDateTime(),
             'email' => $payment->getEmail(),
-            'lang' => $payment->getLang(),
+            'lang' => $payment->getLanguage(),
             'mobile' => $payment->getPhone(),
             'name' => $payment->getName(),
             'reference' => $payment->getReference(),
@@ -321,7 +320,7 @@ class PayFluid
             $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
         if ($payment->hasCustomization()) {
-            $requestBody["customTxn"] = $payment->customization()->toArray();
+            $requestBody["customTxn"] = $payment->getCustomization()->toArray();
         }
 
         ksort($requestBody);
