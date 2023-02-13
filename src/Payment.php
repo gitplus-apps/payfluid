@@ -485,7 +485,7 @@ class Payment
      */
     public function getReference(): string
     {
-        return $this->reference;
+        return $this->reference ?? "";
     }
 
     /**
@@ -495,7 +495,7 @@ class Payment
      */
     public function getAmount(): float
     {
-        return $this->amount;
+        return $this->amount ?? 0.0;
     }
 
     /**
@@ -505,7 +505,7 @@ class Payment
      */
     public function getCurrency(): string
     {
-        return $this->currency;
+        return $this->currency ?? "";
     }
 
     /**
@@ -513,9 +513,9 @@ class Payment
      *
      * @return string
      */
-    public function getDateTime(): string
+    public function getDateTime(): ?string
     {
-        return $this->dateTime;
+        return $this->dateTime ?? "";
     }
 
     /**
@@ -548,7 +548,7 @@ class Payment
      */
     public function getEmail(): string
     {
-        return $this->email;
+        return $this->email ?? "";
     }
 
     /**
@@ -558,7 +558,7 @@ class Payment
      */
     public function getLang(): string
     {
-        return $this->lang;
+        return $this->lang ?? "";
     }
 
     /**
@@ -568,7 +568,7 @@ class Payment
      */
     public function getPhone(): string
     {
-        return $this->phone;
+        return $this->phone ?? "";
     }
 
     /**
@@ -578,7 +578,7 @@ class Payment
      */
     public function getOtherInfo(): string
     {
-        return $this->otherInfo;
+        return $this->otherInfo ?? "";
     }
 
     /**
@@ -588,7 +588,7 @@ class Payment
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?? "";
     }
 
     /**
@@ -598,7 +598,7 @@ class Payment
      */
     public function getRedirectUrl(): string
     {
-        return $this->redirectUrl;
+        return $this->redirectUrl ?? "";
     }
 
     /**
@@ -608,7 +608,7 @@ class Payment
      */
     public function getCallbackUrl(): string
     {
-        return $this->callbackUrl;
+        return $this->callbackUrl ?? "";
     }
 
 }

@@ -214,7 +214,7 @@ class PayFluid
     {
         // Validate amount
         if (empty($payment->getAmount())) {
-            throw new Exception("validate payment: amount cannot be empty");
+            throw new Exception("validate payment: amount cannot be empty or zero");
         }
 
         // Validate currency
