@@ -1,1 +1,0 @@
-{"version":1,"defects":{"ExampleAssertionsTest::testThatSomethingIsTrue":5,"PayFluidTest::testThatSomethingIsTrue":7,"PayFluidTest::testValidatePayment":8},"times":{"ExampleAssertionsTest::testThatSomethingIsTrue":0.003,"PayFluidTest::testThatSomethingIsTrue":0.013,"PayFluidTest::testValidatePayment":0.01}}
