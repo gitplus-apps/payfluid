@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Gitplus\PayFluid;
@@ -31,7 +32,16 @@ class PayFluid
      */
     protected string $loginParameter;
 
-    private const baseUrl = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
+    private const TEST_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
+    private const LIVE_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
+
+    /**
+     * Specifies the maximum number of characters in a payment description
+     *
+     * @var string
+     */
+    private const MAX_DESCRIPTION_LEN = 40;
+
 
     /**
      * The various endpoints provided by the API
@@ -39,17 +49,48 @@ class PayFluid
      * @var array
      */
     protected array $endpoints = [
-        "secureZone" => self::baseUrl . "/secureCredentials",
-        "getPaymentLink" => self::baseUrl . "/getPayLink",
-        "paymentStatus" => "https://www.payoutlet.com.gh/payfluid/ext/api/status?msg",
+        "test" => [
+            "secureZone" => self::TEST_BASE_URL . "/secureCredentials",
+            "getPaymentLink" => self::TEST_BASE_URL . "/getPayLink",
+            "paymentStatus" => "https://www.payoutlet.com.gh/payfluid/ext/api/status?msg",
+        ],
+        "live" => [
+            "secureZone" => self::LIVE_BASE_URL . "/secureCredentials",
+            "getPaymentLink" => self::LIVE_BASE_URL . "/getPayLink",
+            "paymentStatus" => "https://www.payoutlet.com.gh/payfluid/ext/api/status?msg",
+        ]
     ];
 
-    public function __construct(string $apiId, string $apiKey, string $loginParameter)
+    protected bool $inLiveMode;
+
+    /**
+     * Instantiates a new PayFluid client.
+     *
+     * @param string $apiId The API id supplied from PayFluid
+     * @param string $apiKey The API key supplied from PayFluid
+     * @param string $loginParameter The login parameter supplied from PayFluid
+     * @param bool $inLiveMode Indicates whether you are in live mode or test mode; true for live mode, false for test mode
+     */
+    public function __construct(string $apiId, string $apiKey, string $loginParameter, bool $inLiveMode)
     {
         $this->apiId = $apiId;
         $this->apiKey = $apiKey;
         $this->loginParameter = $loginParameter;
+        $this->inLiveMode = $inLiveMode;
     }
+
+    /**
+     * Returns the appropriate endpoint for either live or test mode.
+     *
+     * @param string $endpoint
+     * @return string
+     */
+    private function getEndpoint(string $endpoint): string
+    {
+        $mode = $this->inLiveMode ? "live" : "test";
+        return $this->endpoints[$mode][$endpoint];
+    }
+
 
     /**
      * Generates an id for use as the API key in the header when getting secure
@@ -58,7 +99,7 @@ class PayFluid
      * @param DateTime $now
      * @return string
      */
-    private function generateId(DateTime $now): string
+    private function generateApiKeyHeader(DateTime $now): string
     {
         $rsa = new RSA();
         $rsa->loadKey($this->apiKey);
@@ -67,6 +108,7 @@ class PayFluid
         $output = $rsa->encrypt($data);
         return base64_encode($output);
     }
+
 
     /**
      * Makes a request to the secure zone endpoint to get new secure credentials.
@@ -89,13 +131,13 @@ class PayFluid
         ]);
 
         if ($requestBody === false) {
-            throw new Exception("get secure credentials: encoding the request body to json failed: " . json_last_error_msg());
+            throw new Exception("get secure credentials: encoding request body to json failed: " . json_last_error_msg());
         }
 
         $rsaPublicKey = $sha256Salt = "";
 
-        $ch = curl_init($this->endpoints["secureZone"]);
-        $optionsSet = curl_setopt_array($ch, [
+        $ch = curl_init($this->getEndpoint("secureZone"));
+        $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_RETURNTRANSFER => true,
@@ -103,7 +145,7 @@ class PayFluid
             CURLOPT_HTTPHEADER => [
                 "Content-Type: application/json",
                 "id: " . base64_encode($this->apiId),
-                "apiKey: " . $this->generateId($now),
+                "apiKey: " . $this->generateApiKeyHeader($now),
             ],
 
             // This curl option calls the function for each header in the response.
@@ -123,7 +165,7 @@ class PayFluid
                 return $headerLen;
             }
         ]);
-        if (!$optionsSet) {
+        if (!$optionsOk) {
             throw new Exception("get secure credentials: setting curl options failed: " . curl_error($ch));
         }
 
@@ -151,6 +193,52 @@ class PayFluid
         );
     }
 
+
+    /**
+     * Checks to ensure that the payment object is valid
+     *
+     * @param Payment $payment
+     * @throws Exception
+     */
+    private function validatePaymentObject(Payment $payment)
+    {
+        // Validate amount
+        if (empty($payment->getAmount())) {
+            throw new Exception("validate payment: amount cannot be empty");
+        }
+
+        // Validate currency
+        if (empty($payment->currency())) {
+            throw new Exception("validate payment: currency cannot be empty");
+        }
+
+        // Validate date time
+        if (empty($payment->getDateTime())) {
+            throw new Exception("validate payment: datetime cannot be empty: you must supply a date time string in the format 'Y-m-d\TH:i:s.v\Z'");
+        }
+
+        // Validate email
+        if (empty($payment->getEmail())) {
+            throw new Exception("validate payment: email cannot be empty");
+        }
+
+        // Validate phone number
+        if (empty($payment->getPhone())) {
+            throw new Exception("validate payment: phone cannot be empty");
+        }
+
+        // Validate reference
+        if (empty($payment->getReference())) {
+            throw new Exception("validate payment: reference cannot be empty");
+        }
+
+        // Validate redirect and callback urls
+        if (empty($payment->getRedirectUrl())) {
+            throw new Exception("validate payment: redirect url cannot be empty");
+        }
+    }
+
+
     /**
      * Creates a signature for use in requests to the server
      *
@@ -159,137 +247,84 @@ class PayFluid
      * @return string A base64 encoded string of the signature
      * @throws Exception
      */
-    private function createSignature(SecureCredentials $credentials, array $requestBody): string
+    private function signRequest(SecureCredentials $credentials, array $requestBody): string
     {
         $requestBodyAsString = join("", array_values($requestBody));
-        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
+
+        // $requestBodyAsString = "";
+        // array_walk_recursive($requestBody, function ($value, $key) use (&$requestBodyAsString) {
+        //     $requestBodyAsString .= $value;
+        // });
 
         $rsa = new RSA();
+        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
         $keyLoaded = $rsa->loadKey($credentials->rsaPublicKey);
         if (!$keyLoaded) {
-            throw new Exception("create signature: loading rsa public key failed");
+            throw new Exception("sign request: loading rsa public key failed");
         }
 
-        $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
+        $hash = hash_hmac("sha256", $requestBodyAsString, $credentials->sha256Salt);
         return base64_encode($rsa->encrypt($hash));
     }
 
-    /**
-     * Checks to ensure that the payment object is valid
-     *
-     * @param Payment $payment
-     * @throws InvalidPaymentRequestException
-     */
-    private function validatePaymentObject(Payment $payment)
-    {
-        // Validate amount
-        if (empty($payment->amount)) {
-            throw new InvalidPaymentRequestException("validate payment: amount cannot be empty");
-        }
-        if (!filter_var($payment->amount, FILTER_VALIDATE_FLOAT)) {
-            throw new InvalidPaymentRequestException(sprintf("validate payment: '%s' amount is not valid float or decimal", $payment->amount));
-        }
-
-        // Validate currency
-        if (empty($payment->currency)) {
-            throw new InvalidPaymentRequestException("validate payment: currency cannot be empty");
-        }
-
-        // Validate date time
-        if (empty($payment->dateTime)) {
-            throw new InvalidPaymentRequestException("validate payment: datetime cannot be empty: you must supply a date time string in the format 'Y-m-d\TH:i:s.v\Z'");
-        }
-
-        // Validate email
-        if (empty($payment->email)) {
-            throw new InvalidPaymentRequestException("validate payment: email cannot be empty");
-        }
-        if (!filter_var($payment->email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidPaymentRequestException(sprintf("validate payment: '%s' is not a valid email", $payment->email));
-        }
-
-        // Validate phone number
-        if (empty($payment->phone)) {
-            throw new InvalidPaymentRequestException("validate payment: phone cannot be empty");
-        }
-        if (!is_numeric($payment->phone)) {
-            throw new InvalidPaymentRequestException(sprintf("validate payment: '%s' is not a valid phone number: only digits allowed", $payment->phone));
-        }
-
-        // Validate reference
-        if (empty($payment->reference)) {
-            throw new InvalidPaymentRequestException("validate payment: reference cannot be empty");
-        }
-        $refLen = strlen($payment->reference);
-        if ($refLen > 10) {
-            throw new InvalidPaymentRequestException(sprintf("validate payment: reference cannot be more than 10 characters: your reference '%s' is %d characters long", $payment->reference, $refLen));
-        }
-
-        // Validate redirect and callback urls
-        if (empty($payment->redirectUrl)) {
-            throw new InvalidPaymentRequestException("validate payment: redirect url cannot be empty");
-        }
-        if (!empty($payment->callbackUrl) && ($payment->redirectUrl === $payment->callbackUrl)) {
-            throw new InvalidPaymentRequestException("validate payment: the 'redirectUrl' and 'callbackUrl' cannot be the same");
-        }
-    }
 
     /**
      * Makes a request to PayFluid to initiate a payment.
      *
      * @param SecureCredentials $credentials
      * @param Payment $payment
-     * @return PaymentLink A PaymentLink object with details about the payment link
+     * @return PaymentLink A PaymentLink object with the url to the payment page
      * @throws Exception
      */
     public function getPaymentLink(SecureCredentials $credentials, Payment $payment): PaymentLink
     {
         if (empty($credentials->session)) {
-            throw new Exception("get payment link: the session value in credentials cannot be empty");
+            throw new Exception("get payment link: invalid credentials: session value is empty");
         }
 
         try {
             $this->validatePaymentObject($payment);
         } catch (Throwable $e) {
-            throw new InvalidPaymentRequestException("get payment link: invalid payment object: " . $e->getMessage());
+            throw new Exception("get payment link: invalid payment object: " . $e->getMessage());
         }
 
         $requestBody = [
-            'amount' => $payment->amount,
-            'currency' => $payment->currency,
-            'datetime' => $payment->dateTime,
-            'email' => $payment->email,
-            'lang' => $payment->lang,
-            'mobile' => $payment->phone,
-            'name' => $payment->name,
-            'reference' => $payment->reference,
-            'responseRedirectURL' => $payment->redirectUrl,
+            'amount' => $payment->getAmount(),
+            'currency' => $payment->getCurrency(),
+            'datetime' => $payment->getDateTime(),
+            'email' => $payment->getEmail(),
+            'lang' => $payment->getLang(),
+            'mobile' => $payment->getPhone(),
+            'name' => $payment->getName(),
+            'reference' => $payment->getReference(),
+            'responseRedirectURL' => $payment->getRedirectUrl(),
             'session' => $credentials->session,
         ];
 
-        if (!empty($payment->description)) {
-            $requestBody["descr"] = $payment->description;
+        if (!empty($payment->getDescription())) {
+            $requestBody["descr"] = $payment->getDescription();
         }
-        if (!empty($payment->otherInfo)) {
-            $requestBody["otherInfo"] = $payment->otherInfo;
+        if (!empty($payment->getOtherInfo())) {
+            $requestBody["otherInfo"] = $payment->getOtherInfo();
         }
-        if (!empty($payment->callbackUrl)) {
-            $requestBody["trxStatusCallbackURL"] = $payment->callbackUrl;
+        if (!empty($payment->getCallbackUrl())) {
+            $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
-        if (!empty($payment->customTxn)) {
-            $requestBody["customTxn"] = $payment->customTxn;
+        if ($payment->hasCustomization()) {
+            $requestBody["customTxn"] = $payment->customization()->toArray();
         }
 
         ksort($requestBody);
-        $signature = $this->createSignature($credentials, $requestBody);
+        $signature = $this->signRequest($credentials, $requestBody);
 
         $requestBody = json_encode($requestBody, JSON_PRESERVE_ZERO_FRACTION);
         if ($requestBody === false) {
             throw new Exception("get payment link: error encoding request body to json: " . json_last_error_msg());
         }
 
-        $ch = curl_init($this->endpoints["getPaymentLink"]);
-        $optionsSet = curl_setopt_array($ch, [
+
+        $ch = curl_init($this->getEndpoint("getPaymentLink"));
+        $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
@@ -298,7 +333,7 @@ class PayFluid
             ],
             CURLOPT_POSTFIELDS => $requestBody
         ]);
-        if (!$optionsSet) {
+        if (!$optionsOk) {
             throw new Exception("get payment link: setting curl options failed: " . curl_error($ch));
         }
 
@@ -307,89 +342,60 @@ class PayFluid
             throw new Exception("get payment link: request failed: " . curl_error($ch));
         }
 
-        $response = json_decode($response);
-        if ($response === null) {
-            throw new Exception("get payment link: could not decode json response from server: " . json_last_error_msg());
+        $result = json_decode($response);
+        if ($result === null) {
+            throw new Exception(
+                sprintf(
+                    "get payment link: could not decode json, upstream server response '%s': json: %s",
+                    $response,
+                    json_last_error_msg()
+                )
+            );
         }
 
-        if ($response->result_code !== "00") {
-            throw new Exception("get payment link: " . $response->result_message);
+        if ($result->result_code !== "00") {
+            throw new Exception(sprintf("get payment link: request failed with error code: %d and error message: '%s'", $result->result_code, $result->result_message));
         }
 
         $paymentLink = new PaymentLink();
-        $paymentLink->approvalCode = $response->approvalCode;
-        $paymentLink->resultMessage = $response->result_message;
-        $paymentLink->session = $response->session;
-        $paymentLink->webUrl = $response->webURL;
-        $paymentLink->resultCode = $response->result_code;
+        $paymentLink->approvalCode = $result->approvalCode;
+        $paymentLink->resultMessage = $result->result_message;
+        $paymentLink->session = $result->session;
+        $paymentLink->webUrl = $result->webURL;
+        $paymentLink->resultCode = $result->result_code;
 
-        $payReference = explode("/", $response->webURL);
+        $payReference = explode("/", $result->webURL);
         $paymentLink->payReference = $payReference[count($payReference) - 1];
-
         return $paymentLink;
     }
 
 
     /**
-     * @param string $payReference
-     * @param string $session
-     * @return PaymentStatus
-     * @throws Exception
-     */
-    public function confirmPaymentStatus(string $payReference, string $session): PaymentStatus
-    {
-        $ch = curl_init();
-        $optionsSet = curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_URL => $this->endpoints["paymentStatus"],
-            CURLOPT_HTTPHEADER => [
-                "payReference: " . $payReference,
-            ],
-        ]);
-
-        if (!$optionsSet) {
-            throw new Exception("confirm payment status: error setting curl options: " . curl_error($ch));
-        }
-
-        $response = curl_exec($ch);
-        if ($response === false) {
-            throw new Exception("confirm payment status: making http request failed: " . curl_error($ch));
-        }
-
-        $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
-        if ($payload === null) {
-            throw new Exception("confirm payment status: error json decoding response from server: " . json_last_error_msg());
-        }
-
-        return self::verifyPayment($payload, $session);
-    }
-
-    /**
-     * Verifies that the data sent from PayFluid to the integrator is coming from
-     * PayFluid and has not been tampered with.
+     * Verifies that the data sent from PayFluid to the integrator is indeed
+     * coming from PayFluid and has not been tampered with.
      *
-     * @param string|array $transactionDetails Either a valid JSON string or an array
+     * @param string|array $paymentDetails Either a valid JSON string or an array
      * @param string $session The session value from secure credentials
      * @return PaymentStatus
      * @throws Exception
      */
-    public static function verifyPayment($transactionDetails, string $session): PaymentStatus
+    public static function verifyPayment($paymentDetails, string $session): PaymentStatus
     {
         $payload = null;
         switch (true) {
-            case is_string($transactionDetails):
-                $payload = json_decode(urldecode($transactionDetails), true, 512, JSON_BIGINT_AS_STRING);
+            case is_string($paymentDetails):
+                $payload = json_decode(urldecode($paymentDetails), true, 512, JSON_BIGINT_AS_STRING);
                 if ($payload === null) {
                     throw new Exception("verify transaction: error json decoding transaction details: " . json_last_error_msg());
                 }
                 break;
 
-            case is_array($transactionDetails):
-                $payload = $transactionDetails;
+            case is_array($paymentDetails):
+                $payload = $paymentDetails;
                 break;
 
             default:
-                throw new InvalidArgumentException("verify transaction: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($transactionDetails));
+                throw new InvalidArgumentException("verify transaction: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($paymentDetails));
         }
 
         if (!array_key_exists("aapf_txn_signature", $payload)) {
@@ -403,7 +409,6 @@ class PayFluid
         unset($payload["aapf_txn_signature"]);
 
         $queryParams = join("", array_values($payload));
-
         $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
         if (!hash_equals(strtoupper($calculatedSignature), strtoupper($signatureFromRequest))) {
             throw new Exception("verify transaction: signature is not valid");
@@ -416,15 +421,65 @@ class PayFluid
         $status->clientReference = $payload["aapf_txn_cref"];
         $status->currency = $payload["aapf_txn_currency"];
         $status->dateTime = $payload["aapf_txn_datetime"];
-        $status->upstreamReference = $payload["aapf_txn_gw_ref"];
-        $status->upstreamErrorCodeAndMsg = $payload["aapf_txn_gw_sc"];
-        $status->maskedPhoneNumber = $payload["aapf_txn_maskedInstr"];
+        $status->upStreamReference = $payload["aapf_txn_gw_ref"];
+        $status->upStreamDebitStatus = $payload["aapf_txn_gw_sc"];
+        $status->maskedInstrument = $payload["aapf_txn_maskedInstr"];
         $status->payReference = $payload["aapf_txn_payLink"];
         $status->payScheme = $payload["aapf_txn_payScheme"];
         $status->payFluidReference = $payload["aapf_txn_ref"];
-        $status->payFluidErrorCode = $payload["aapf_txn_sc"];
-        $status->payFluidErrorMsg = $payload["aapf_txn_sc_msg"];
+        $status->statusCode = $payload["aapf_txn_sc"];
+        $status->statusString = $payload["aapf_txn_sc_msg"];
         $status->signature = $signatureFromRequest;
         return $status;
+    }
+
+
+    /**
+     * Retrieves and lets you confirm the status of a previously pre-created
+     * transaction from when you call the getPaymentLink() method.
+     *
+     * @param string $payReference The payReference value. This value is available
+     *                             on the object returned when you call getPaymentLink()
+     *                             method.
+     *
+     * @param string $session The session value. This is value available on the
+     *                        object returned when you call getPaymentLink()
+     *                        method.
+     *
+     * @return PaymentStatus
+     * @throws Exception
+     */
+    public function getPaymentStatus(string $payReference, string $session): PaymentStatus
+    {
+        if ($payReference === "") {
+            throw new InvalidArgumentException("confirm payment status: payReference cannot be empty");
+        }
+        if ($session === "") {
+            throw new InvalidArgumentException("confirm payment status: session cannot be empty");
+        }
+
+        $ch = curl_init($this->getEndpoint("paymentStatus"));
+        $optionsOk = curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "payReference: " . $payReference,
+            ],
+        ]);
+
+        if (!$optionsOk) {
+            throw new Exception("confirm payment status: error preparing request: " . curl_error($ch));
+        }
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            throw new Exception("confirm payment status: request failed: " . curl_error($ch));
+        }
+
+        $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
+        if ($payload === null) {
+            throw new Exception("confirm payment status: could not decode server response: `%s`, json error: `%s`" . $response, json_last_error_msg());
+        }
+
+        return self::verifyPayment($payload, $session);
     }
 }
