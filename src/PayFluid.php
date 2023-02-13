@@ -217,6 +217,11 @@ class PayFluid
             throw new Exception("validate payment: amount cannot be empty or zero");
         }
 
+        // Validate name
+        if (empty($payment->getName())) {
+            throw new Exception("validate payment: name cannot be empty");
+        }
+
         // Validate currency
         if (empty($payment->currency())) {
             throw new Exception("validate payment: currency cannot be empty");
