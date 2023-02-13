@@ -6,6 +6,9 @@ namespace Gitplus\PayFluid;
 
 use Exception;
 
+/**
+ * Customization describes the customization you want for the payment page
+ */
 class Customization
 {
     /**

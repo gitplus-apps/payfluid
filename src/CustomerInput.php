@@ -4,6 +4,9 @@ namespace Gitplus\PayFluid;
 
 use Exception;
 
+/**
+ * CustomerInput is an extra input for collecting information from the payer
+ */
 class CustomerInput
 {
     public const TYPE_TEXT = "input";
