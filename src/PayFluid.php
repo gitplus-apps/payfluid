@@ -104,7 +104,7 @@ class PayFluid
         $rsa = new RSA();
         $keyLoaded = $rsa->loadKey($this->apiKey);
         if (!$keyLoaded) {
-            throw new Exception("generate api key header: loading api key failed, please make sure API key is correct");
+            throw new Exception("generate api key header: loading api key failed, please make sure your api key is correct");
         }
 
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
