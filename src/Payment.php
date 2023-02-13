@@ -7,7 +7,12 @@ namespace Gitplus\PayFluid;
 use DateTime;
 use Exception;
 
-
+/**
+ * Payment is a new payment request to be made to PayFluid.
+ *
+ * It describes the details of the payment/transaction a customer
+ * is about to pay for.
+ */
 class Payment
 {
     /**
@@ -231,7 +236,7 @@ class Payment
      *    }
      * @var Customization
      */
-    private Customization $pageCustomization;
+    private Customization $customization;
 
     public function __construct()
     {
@@ -474,7 +479,7 @@ class Payment
      */
     public function customize(Customization $customization): self
     {
-        $this->pageCustomization = $customization;
+        $this->customization = $customization;
         return $this;
     }
 
@@ -525,7 +530,7 @@ class Payment
      */
     public function getCustomization(): ?Customization
     {
-        return $this->pageCustomization ?? null;
+        return $this->customization ?? null;
     }
 
     /**
@@ -535,7 +540,7 @@ class Payment
      */
     public function hasCustomization(): bool
     {
-        return isset($this->pageCustomization);
+        return isset($this->customization);
     }
 
     /**

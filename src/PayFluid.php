@@ -35,13 +35,6 @@ class PayFluid
     private const TEST_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
     private const LIVE_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
 
-    /**
-     * Specifies the maximum number of characters in a payment description
-     *
-     * @var string
-     */
-    private const MAX_DESCRIPTION_LEN = 40;
-
 
     /**
      * The various endpoints provided by the API
@@ -98,6 +91,7 @@ class PayFluid
      *
      * @param DateTime $now
      * @return string
+     * @throws Exception
      */
     private function generateApiKeyHeader(DateTime $now): string
     {
@@ -142,7 +136,7 @@ class PayFluid
 
         try {
             $apiKeyHeader = $this->generateApiKeyHeader($now);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             throw new Exception("get secure credentials: " . $e->getMessage());
         }
 

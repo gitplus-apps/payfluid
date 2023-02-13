@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Gitplus\PayFluid;
 
+/**
+ * PaymentStatus is the status of a payment.
+ *
+ * The most important properties to check are 'statusCode' and 'statusString'.
+ * If 'statusCode' === '0' then the payment is successful. Any other value
+ * means there was an issue with the payment and the 'statusString' will
+ * have a string explaining the meaning of the status code.
+ */
 class PaymentStatus
 {
     /**
