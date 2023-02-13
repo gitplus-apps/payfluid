@@ -140,6 +140,12 @@ class PayFluid
 
         $rsaPublicKey = $sha256Salt = "";
 
+        try {
+            $apiKeyHeader = $this->generateApiKeyHeader($now);
+        } catch (\Throwable $e) {
+            throw new Exception("get secure credentials: " . $e->getMessage());
+        }
+
         $ch = curl_init($this->getEndpoint("secureZone"));
         $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
@@ -149,7 +155,7 @@ class PayFluid
             CURLOPT_HTTPHEADER => [
                 "Content-Type: application/json",
                 "id: " . base64_encode($this->apiId),
-                "apiKey: " . $this->generateApiKeyHeader($now),
+                "apiKey: $apiKeyHeader",
             ],
 
             // This curl option calls the function for each header in the response.
