@@ -303,7 +303,7 @@ class PayFluid
             'currency' => $payment->getCurrency(),
             'datetime' => $payment->getDateTime(),
             'email' => $payment->getEmail(),
-            'lang' => $payment->getLang(),
+            'lang' => $payment->getLanguage(),
             'mobile' => $payment->getPhone(),
             'name' => $payment->getName(),
             'reference' => $payment->getReference(),
@@ -321,7 +321,7 @@ class PayFluid
             $requestBody["trxStatusCallbackURL"] = $payment->getCallbackUrl();
         }
         if ($payment->hasCustomization()) {
-            $requestBody["customTxn"] = $payment->customization()->toArray();
+            $requestBody["customTxn"] = $payment->getCustomization()->toArray();
         }
 
         ksort($requestBody);
