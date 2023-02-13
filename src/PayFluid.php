@@ -102,7 +102,11 @@ class PayFluid
     private function generateApiKeyHeader(DateTime $now): string
     {
         $rsa = new RSA();
-        $rsa->loadKey($this->apiKey);
+        $keyLoaded = $rsa->loadKey($this->apiKey);
+        if (!$keyLoaded) {
+            throw new Exception("generate api key header: loading api key failed");
+        }
+
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
         $data = sprintf("%s.%s", $this->loginParameter, $now->format('YmdHisv'));
         $output = $rsa->encrypt($data);
@@ -477,7 +481,7 @@ class PayFluid
 
         $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
         if ($payload === null) {
-            throw new Exception("confirm payment status: could not decode server response: `%s`, json error: `%s`" . $response, json_last_error_msg());
+            throw new Exception(sprintf("confirm payment status: could not decode server response: `%s`, json error: `%s`", $response, json_last_error_msg()));
         }
 
         return self::verifyPayment($payload, $session);
