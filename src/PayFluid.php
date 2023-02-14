@@ -331,7 +331,6 @@ class PayFluid
             throw new Exception("get payment link: error encoding request body to json: " . json_last_error_msg());
         }
 
-
         $ch = curl_init($this->getEndpoint("getPaymentLink"));
         $optionsOk = curl_setopt_array($ch, [
             CURLOPT_POST => true,
