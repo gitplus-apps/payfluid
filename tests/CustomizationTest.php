@@ -22,10 +22,10 @@ class CustomizationTest extends TestCase
         $minAmt = "minAmt";
         $this->assertArrayHasKey($minAmt, $customization->toArray());
         $this->assertEmpty($customization->toArray()[$minAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$minAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$minAmt]);
 
         $customization->minimumAmount(2.5);
-        $this->assertEquals(2.5, $customization->toArray()[$minAmt]);
+        $this->assertSame(2.5, $customization->toArray()[$minAmt]);
     }
     public function testMaximumAmount()
     {
@@ -33,10 +33,10 @@ class CustomizationTest extends TestCase
         $maxAmt = "maxAmt";
         $this->assertArrayHasKey($maxAmt, $customization->toArray());
         $this->assertEmpty($customization->toArray()[$maxAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$maxAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$maxAmt]);
 
         $customization->maximumAmount(2.5);
-        $this->assertEquals(2.5, $customization->toArray()[$maxAmt]);
+        $this->assertSame(2.5, $customization->toArray()[$maxAmt]);
     }
 
     public function testMaximumAmountCannotBeLessThanMinimumAmount()
@@ -48,10 +48,10 @@ class CustomizationTest extends TestCase
         $this->assertArrayHasKey($minAmt, $customization->toArray());
 
         $this->assertEmpty($customization->toArray()[$maxAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$maxAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$maxAmt]);
 
         $this->assertEmpty($customization->toArray()[$minAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$minAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$minAmt]);
 
         $this->expectException(Exception::class);
         $customization->maximumAmount(3);
@@ -67,10 +67,10 @@ class CustomizationTest extends TestCase
         $this->assertArrayHasKey($minAmt, $customization->toArray());
 
         $this->assertEmpty($customization->toArray()[$maxAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$maxAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$maxAmt]);
 
         $this->assertEmpty($customization->toArray()[$minAmt]);
-        $this->assertEquals(0.0, $customization->toArray()[$minAmt]);
+        $this->assertSame(0.0, $customization->toArray()[$minAmt]);
 
         $this->expectException(Exception::class);
         $customization->minimumAmount(5.0);
@@ -82,10 +82,10 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "borderTheme";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()["borderTheme"]);
+        $this->assertSame("", $c->toArray()["borderTheme"]);
 
         $c->borderTheme("#aa33ff");
-        $this->assertEquals("#aa33ff", $c->toArray()["borderTheme"]);
+        $this->assertSame("#aa33ff", $c->toArray()["borderTheme"]);
     }
 
     public function testInvalidBorderTheme()
@@ -100,16 +100,16 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "receiptFeedbackPhone";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $c->receiptFeedbackPhone("0241111111");
-        $this->assertEquals("0241111111", $c->toArray()[$key]);
+        $this->assertSame("0241111111", $c->toArray()[$key]);
 
         $c->receiptFeedbackPhone("  0241111111");
-        $this->assertEquals("0241111111", $c->toArray()[$key]);
+        $this->assertSame("0241111111", $c->toArray()[$key]);
 
         $c->receiptFeedbackPhone("+233241111111");
-        $this->assertEquals("+233241111111", $c->toArray()[$key]);
+        $this->assertSame("+233241111111", $c->toArray()[$key]);
     }
 
     public function testReceiptFeedbackPhoneLength()
@@ -117,7 +117,7 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "receiptFeedbackPhone";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $this->expectException(Exception::class);
         $c->receiptFeedbackPhone("026111111");
@@ -128,7 +128,7 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "receiptFeedbackPhone";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $this->expectException(Exception::class);
         $c->receiptFeedbackPhone("A202323");
@@ -139,13 +139,13 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "receiptFeedbackEmail";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $c->receiptFeedbackEmail("janedoe@email.com");
-        $this->assertEquals("janedoe@email.com", $c->toArray()[$key]);
+        $this->assertSame("janedoe@email.com", $c->toArray()[$key]);
 
         $c->receiptFeedbackEmail("   john@email.com   \n\t");
-        $this->assertEquals("john@email.com", $c->toArray()[$key]);
+        $this->assertSame("john@email.com", $c->toArray()[$key]);
     }
 
     public function testInvalidReceiptEmail()
@@ -153,7 +153,7 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "receiptFeedbackEmail";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $this->expectException(Exception::class);
         $c->receiptFeedbackEmail("janedoe@emailcom");
@@ -165,10 +165,10 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "payLinkExpiryInDays";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals(3, $c->toArray()[$key]);
+        $this->assertSame(3, $c->toArray()[$key]);
 
         $c->daysUntilLinkExpires(15);
-        $this->assertEquals(15, $c->toArray()[$key]);
+        $this->assertSame(15, $c->toArray()[$key]);
     }
 
     public function testDisplayPicture()
@@ -176,10 +176,10 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "displayPicture";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $c->displayPicture("https://i.pravatar.cc/300");
-        $this->assertEquals("https://i.pravatar.cc/300", $c->toArray()[$key]);
+        $this->assertSame("https://i.pravatar.cc/300", $c->toArray()[$key]);
     }
 
     public function testAssertInvalidPictureUrl()
@@ -187,7 +187,7 @@ class CustomizationTest extends TestCase
         $c = new Customization();
         $key = "displayPicture";
         $this->assertArrayHasKey($key, $c->toArray());
-        $this->assertEquals("", $c->toArray()[$key]);
+        $this->assertSame("", $c->toArray()[$key]);
 
         $this->expectException(Exception::class);
         $c->displayPicture("https:/i.pravatar.cc/300");
