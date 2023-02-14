@@ -134,11 +134,15 @@ class Customization
      *
      * @param float $minAmount
      * @return $this
+     * @throws Exception
      */
     public function minimumAmount(float $minAmount): self
     {
         if ($minAmount === 0.0) {
             throw new Exception("customization: minimum amount cannot be zero");
+        }
+        if (isset($this->maxAmount) && $this->maxAmount !== 0.0 && $this->maxAmount < $minAmount) {
+            throw new Exception(sprintf("customization: maximum amount '%f' cannot be less than minimum amount '%f'",$this->maxAmount, $minAmount));
         }
         $this->minAmount = $minAmount;
         return $this;
@@ -149,11 +153,15 @@ class Customization
      *
      * @param float $maxAmount
      * @return $this
+     * @throws Exception
      */
     public function maximumAmount(float $maxAmount): self
     {
         if ($maxAmount === 0.0) {
             throw new Exception("customization: maximum amount cannot be zero");
+        }
+        if (isset($this->minAmount) && $this->minAmount !== 0.0 && $this->minAmount > $maxAmount) {
+            throw new Exception(sprintf("customization: minimum amount '%f' cannot be greater than maximum amount '%f'", $this->minAmount, $maxAmount));
         }
         $this->maxAmount = $maxAmount;
         return $this;
@@ -164,12 +172,19 @@ class Customization
      * theme of the payment page seen by the payer.
      * E.g. #9c27b0
      *
-     * @param string $hexColorCode
+     * @param string $hexCode
      * @return $this
+     * @throws Exception If an invalid hexcode is supplied
      */
-    public function borderTheme(string $hexColorCode): self
+    public function borderTheme(string $hexCode): self
     {
-        $this->borderTheme = trim($hexColorCode);
+        $hexCode = trim($hexCode);
+        $hexCodePattern = '/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/';
+        if (!preg_match($hexCodePattern, $hexCode)) {
+            throw new Exception(sprintf("customization: invalid hex code '%s' supplied as borderTheme, please make sure it is a valid hex code", $hexCode));
+        }
+
+        $this->borderTheme = trim($hexCode);
         return $this;
     }
 
@@ -330,16 +345,16 @@ class Customization
     public function toArray(): array
     {
         $payload = [
-            "borderTheme" => $this->borderTheme,
-            "displayPicture" => $this->displayPicture,
-            "editAmt" => $this->editAmount,
-            "maxAmt" => $this->maxAmount,
-            "minAmt" => $this->minAmount,
-            "receiptFeedbackEmail" => $this->receiptFeedbackEmail,
-            "receiptFeedbackPhone" => $this->receiptFeedbackPhone,
-            "receiptSxMsg" => $this->receiptMsg,
-            "payLinkCanPayMultipleTimes" => $this->canPayMultipleTimes,
-            "payLinkExpiryInDays" => $this->payLinkExpiryInDays,
+            "borderTheme" => $this->borderTheme ?? "",
+            "displayPicture" => $this->displayPicture ?? "",
+            "editAmt" => $this->editAmount ?? false,
+            "maxAmt" => $this->maxAmount ?? 0.0,
+            "minAmt" => $this->minAmount ?? 0.0,
+            "receiptFeedbackEmail" => $this->receiptFeedbackEmail ?? "",
+            "receiptFeedbackPhone" => $this->receiptFeedbackPhone ?? "",
+            "receiptSxMsg" => $this->receiptMsg ?? "",
+            "payLinkCanPayMultipleTimes" => $this->canPayMultipleTimes ?? false,
+            "payLinkExpiryInDays" => $this->payLinkExpiryInDays ?? 3,
         ];
 
         if (!empty($this->customerInputs)) {

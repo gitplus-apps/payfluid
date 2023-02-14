@@ -17,23 +17,23 @@ class PayFluid
      *
      * @var string
      */
-    protected string $apiId;
+    protected string $clientId;
 
     /**
      * The API key obtained from PayFluid
      *
      * @var string
      */
-    protected string $apiKey;
+    protected string $encryptionKey;
 
     /**
      * The login parameter obtained from PayFluid
      * @var string
      */
-    protected string $loginParameter;
+    protected string $apiKey;
 
     private const TEST_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
-    private const LIVE_BASE_URL = "https://payfluid-api.herokuapp.com/payfluid/ext/api";
+    private const LIVE_BASE_URL = "https://www.payoutlet.com.gh/payfluid/ext/api";
 
 
     /**
@@ -45,31 +45,31 @@ class PayFluid
         "test" => [
             "secureZone" => self::TEST_BASE_URL . "/secureCredentials",
             "getPaymentLink" => self::TEST_BASE_URL . "/getPayLink",
-            "paymentStatus" => "https://www.payoutlet.com.gh/payfluid/ext/api/status?msg",
+            "paymentStatus" => self::TEST_BASE_URL . "/status?msg",
         ],
         "live" => [
             "secureZone" => self::LIVE_BASE_URL . "/secureCredentials",
             "getPaymentLink" => self::LIVE_BASE_URL . "/getPayLink",
-            "paymentStatus" => "https://www.payoutlet.com.gh/payfluid/ext/api/status?msg",
+            "paymentStatus" => self::LIVE_BASE_URL . "/status?msg",
         ]
     ];
 
-    protected bool $inLiveMode;
+    protected bool $liveMode;
 
     /**
      * Instantiates a new PayFluid client.
      *
-     * @param string $apiId The API id supplied from PayFluid
+     * @param string $clientId The client id supplied from PayFluid
+     * @param string $encryptionKey The RSA encryption key supplied from PayFluid
      * @param string $apiKey The API key supplied from PayFluid
-     * @param string $loginParameter The login parameter supplied from PayFluid
-     * @param bool $inLiveMode Indicates whether you are in live mode or test mode; true for live mode, false for test mode
+     * @param bool $liveMode Indicates whether you are in live mode or test mode; true for live mode, false for test mode
      */
-    public function __construct(string $apiId, string $apiKey, string $loginParameter, bool $inLiveMode)
+    public function __construct(string $clientId, string $encryptionKey, string $apiKey, bool $liveMode)
     {
-        $this->apiId = $apiId;
+        $this->clientId = $clientId;
+        $this->encryptionKey = $encryptionKey;
         $this->apiKey = $apiKey;
-        $this->loginParameter = $loginParameter;
-        $this->inLiveMode = $inLiveMode;
+        $this->liveMode = $liveMode;
     }
 
     /**
@@ -80,7 +80,7 @@ class PayFluid
      */
     private function getEndpoint(string $endpoint): string
     {
-        $mode = $this->inLiveMode ? "live" : "test";
+        $mode = $this->liveMode ? "live" : "test";
         return $this->endpoints[$mode][$endpoint];
     }
 
@@ -96,13 +96,13 @@ class PayFluid
     private function generateApiKeyHeader(DateTime $now): string
     {
         $rsa = new RSA();
-        $keyLoaded = $rsa->loadKey($this->apiKey);
+        $keyLoaded = $rsa->loadKey($this->encryptionKey);
         if (!$keyLoaded) {
             throw new Exception("generate api key header: loading api key failed, please make sure your api key is correct");
         }
 
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
-        $data = sprintf("%s.%s", $this->loginParameter, $now->format('YmdHisv'));
+        $data = sprintf("%s.%s", $this->apiKey, $now->format('YmdHisv'));
         $output = $rsa->encrypt($data);
         return base64_encode($output);
     }
@@ -148,7 +148,7 @@ class PayFluid
             CURLOPT_POSTFIELDS => $requestBody,
             CURLOPT_HTTPHEADER => [
                 "Content-Type: application/json",
-                "id: " . base64_encode($this->apiId),
+                "id: " . base64_encode($this->clientId),
                 "apiKey: $apiKeyHeader",
             ],
 
@@ -330,7 +330,6 @@ class PayFluid
         if ($requestBody === false) {
             throw new Exception("get payment link: error encoding request body to json: " . json_last_error_msg());
         }
-
 
         $ch = curl_init($this->getEndpoint("getPaymentLink"));
         $optionsOk = curl_setopt_array($ch, [

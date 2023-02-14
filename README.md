@@ -70,7 +70,7 @@ try {
     // Create a new PayFluid client instance. The fourth(4th) parameter is
     // a boolean that indicates whether you are in live or test mode.
     // 'TRUE' for live mode, 'FALSE' for test mode.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
+    $payfluid = new PayFluid($clientId, $encryptionKey, $apiKey, $testOrLiveMode);
     
     // Get secure credentials to authenticate with the server.
     // The returned $credentials object here has your 'session' value.
@@ -206,7 +206,7 @@ use Gitplus\PayFluid\PayFluid;
 
 try {
     // Create a new PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
+    $payfluid = new PayFluid($clientId, $encryptionKey, $apiKey, $testOrLiveMode);
     
     // getPaymentStatus() will return a PaymentStatus object with details information on the status of the payment.
     // The $payReference is from the $paymentLink object you created earlier.
@@ -307,7 +307,7 @@ try {
         ->customize($customization);    // Add the customization you created
     
     // Create the PayFluid client instance.
-    $payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
+    $payfluid = new PayFluid($clientId, $encryptionKey, $apiKey, $testOrLiveMode);
     
     // Generate credentials.
     // Remember the returned $credentials object here has your session value.
@@ -341,7 +341,7 @@ require("vendor/autoload.php");
 
 use Gitplus\PayFluid\PayFluid;
 
-$payfluid = new PayFluid($apiId, $apiKey, $loginParameter, $testOrLiveMode);
+$payfluid = new PayFluid($clientId, $encryptionKey, $apiKey, $testOrLiveMode);
 $credentials = $payfluid->getSecureCredentials($phone);
 
 $payment = new Payment();

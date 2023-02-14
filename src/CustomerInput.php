@@ -27,6 +27,7 @@ class CustomerInput
     {
         $this->type = $this->placeholder = $this->label = "";
     }
+
     /**
      * Sets the label for the customer input.
      *
@@ -116,7 +117,7 @@ class CustomerInput
      */
     public function getType(): string
     {
-        return $this->type;
+        return $this->type ?? "";
     }
 
     /**
@@ -126,7 +127,7 @@ class CustomerInput
      */
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->label ?? "";
     }
 
     /**
@@ -136,7 +137,7 @@ class CustomerInput
      */
     public function getPlaceholder(): string
     {
-        return $this->placeholder;
+        return $this->placeholder ?? "";
     }
 
     /**
@@ -146,6 +147,6 @@ class CustomerInput
      */
     public function getRequired(): bool
     {
-        return $this->required;
+        return $this->required ?? false;
     }
 }
