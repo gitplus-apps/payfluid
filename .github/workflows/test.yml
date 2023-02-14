@@ -13,4 +13,7 @@ jobs:
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@master
-    # ... then your own project steps ...
+        with:
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
+          args: --coverage-text
