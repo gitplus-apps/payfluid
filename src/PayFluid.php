@@ -98,7 +98,7 @@ class PayFluid
         $rsa = new RSA();
         $keyLoaded = $rsa->loadKey($this->encryptionKey);
         if (!$keyLoaded) {
-            throw new Exception("generate api key header: loading api key failed, please make sure your api key is correct");
+            throw new Exception("generate api key header: loading encryption key failed, please make sure your encryption key is valid");
         }
 
         $rsa->setEncryptionMode(RSA::ENCRYPTION_PKCS1);
@@ -394,7 +394,7 @@ class PayFluid
             case is_string($paymentDetails):
                 $payload = json_decode(urldecode($paymentDetails), true, 512, JSON_BIGINT_AS_STRING);
                 if ($payload === null) {
-                    throw new Exception("verify transaction: error json decoding transaction details: " . json_last_error_msg());
+                    throw new Exception("verify payment: error json decoding transaction details: " . json_last_error_msg());
                 }
                 break;
 
@@ -403,14 +403,14 @@ class PayFluid
                 break;
 
             default:
-                throw new InvalidArgumentException("verify transaction: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($paymentDetails));
+                throw new InvalidArgumentException("verify payment: argument 1 must be either a valid JSON string or an array, you passed: " . gettype($paymentDetails));
         }
 
         if (!array_key_exists("aapf_txn_signature", $payload)) {
-            throw new Exception("verify transaction: no signature found");
+            throw new Exception("verify payment: no signature found");
         }
         if (empty($payload["aapf_txn_signature"])) {
-            throw new Exception("verify transaction: signature exists but it is an empty string");
+            throw new Exception("verify payment: signature exists but it is an empty string");
         }
 
         $signatureFromRequest = $payload["aapf_txn_signature"];
@@ -419,7 +419,7 @@ class PayFluid
         $queryParams = join("", array_values($payload));
         $calculatedSignature = hash_hmac("sha256", $queryParams, md5($session));
         if (!hash_equals(strtoupper($calculatedSignature), strtoupper($signatureFromRequest))) {
-            throw new Exception("verify transaction: signature is not valid");
+            throw new Exception("verify payment: signature is not valid");
         }
 
         $status = new PaymentStatus();
@@ -460,10 +460,10 @@ class PayFluid
     public function getPaymentStatus(string $payReference, string $session): PaymentStatus
     {
         if ($payReference === "") {
-            throw new InvalidArgumentException("confirm payment status: payReference cannot be empty");
+            throw new InvalidArgumentException("get payment status: payReference cannot be empty");
         }
         if ($session === "") {
-            throw new InvalidArgumentException("confirm payment status: session cannot be empty");
+            throw new InvalidArgumentException("get payment status: session cannot be empty");
         }
 
         $ch = curl_init($this->getEndpoint("paymentStatus"));
@@ -475,17 +475,17 @@ class PayFluid
         ]);
 
         if (!$optionsOk) {
-            throw new Exception("confirm payment status: error preparing request: " . curl_error($ch));
+            throw new Exception("get payment status: error preparing request: " . curl_error($ch));
         }
 
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception("confirm payment status: request failed: " . curl_error($ch));
+            throw new Exception("get payment status: request failed: " . curl_error($ch));
         }
 
         $payload = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
         if ($payload === null) {
-            throw new Exception(sprintf("confirm payment status: could not decode server response: `%s`, json error: `%s`", $response, json_last_error_msg()));
+            throw new Exception(sprintf("get payment status: could not decode server response: `%s`, json error: `%s`", $response, json_last_error_msg()));
         }
 
         return self::verifyPayment($payload, $session);
